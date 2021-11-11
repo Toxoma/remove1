@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        .container {
+            padding: 1rem 4vw;
+        }
+
+        .d-flex {
+            gap: .5rem;
+        }
+
+        .modal {
+            display: none;
+        }
+
+        .form {
+            margin-bottom: 1rem;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+
+        .shadow {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            opacity: 1;
+            background-color: #fff;
+        }
+    </style>
+
+    <!-- ________________________________ -->
+
+    <div class="container ml-4">
+        <section class="page page-1">
+            <h1>Введите номер телефона</h1>
+            <label for="form-1-phone">Номер телефона</label>
+            <form class="form form-1 d-flex --column">
+                <input id="form-1-phone" type="tel" name="phone">
+                <input class="nextPage" type="submit">
+            </form>
+        </section>
+        <section class="page page-2">
+            <div class="d-flex">
+                <div class="col col--1">
+                    <h1>Загрузка фото</h1>
+                    <form class="form-2">
+                        <input type="file" id="mainPhotoUpload" class="" name="userfile" accept="image/jpeg, image/png">
+                    </form>
+                </div>
+                <div class="col col--2">
+                    <canvas id="c" width="450" height="600" ></canvas>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal fade show" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cropModalLabel">Кадрировать</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body__zoom d-flex align-items-center mb-2">
+                        <p class="me-2" style="padding: 0; margin: 0">Масштаб</p>
+                        <input id="zoomRange" type="number" value="100" step="1" />
+                    </div>
+                    <div class="mb-3">
+                        <label><input type="checkbox" id="scaleToWidth" checked="" value="1"> Ширина по размеру
+                            Wilberriesе</label>
+                        <label><input type="checkbox" id="scaleToHeight" checked value="1"> Высота по размеру
+                            Wilberries</label>
+                        <label><input type="checkbox" id="concatWidthHeight" checked value="1"> Пропорции 3/4</label>
+                    </div>
+                    <div class="img-container">
+                        <img id="cropImage" src="#" width="100%" alt="Picture">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="button" id="button" class="btn btn-primary save-crop-image">Применить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="shadow d-none"></div> -->
+
+    <!-- ________________________________ -->
+    <script src="https://unpkg.com/fabric@4.6.0/dist/fabric.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"
+        integrity="sha512-ooSWpxJsiXe6t4+PPjCgYmVfr1NS5QXJACcR/FPpsdm6kqG1FmQ2SVyg2RXeVuCRBLr0lWHnWJP6Zs1Efvxzww=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src='/cropModal.js'></script>
+    <script src='/canvas.js'></script>
+
+    <script>
+        let cropImg = document.getElementById('cropImage');
+        let currentPage = 1;
+        let x = true;
+
+        function loadCss(url, integrity, referrerpolicy = '') {
+            return new Promise(resolve => {
+                var link = document.createElement("link");
+                link.type = "text/css";
+                link.rel = "stylesheet";
+                link.href = url;
+                link.crossOrigin = "anonymous";
+                link.integrity = integrity;
+                link.referrerpolicy = referrerpolicy;
+                document.getElementsByTagName("head")[0].appendChild(link);
+                resolve(!x);
+            });
+        }
+        loadCss('https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.css','sha512-+VDbDxc9zesADd49pfvz7CgsOl2xREI/7gnzcdyA9XjuTxLXrdpuz21VVIqc5HPfZji2CypSbxx1lgD7BgBK5g==','no-referrer');
+
+        loadCss('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css','sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm');
+
+        $(document).ready(function () {
+            init();
+        });
+
+        function init() {
+            openPage(currentPage);
+        }
+
+        function openPage(number) {
+            function closeAll() {
+                document.querySelectorAll('section.page.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+            closeAll();
+
+            document.querySelector(`section.page-${number}`).classList.add('active');
+            console.log('currentPage: ', currentPage);
+        }
+
+        //Обработка форм
+        document.querySelectorAll("form").forEach(item => {
+            item.addEventListener('submit', function (event) {
+                let form = this;
+                event.preventDefault();
+
+                let formData = new FormData(form);
+
+                console.log(JSON.stringify(Object.fromEntries(formData)));
+
+                // for (const [key, value] of formData) {
+                //     console.log(key +' \ '+value);
+                // }
+            });
+        });
+
+        //переключение страниц
+        document.querySelectorAll('.nextPage').forEach(item => {
+            item.addEventListener('click', function (event) {
+                openPage(currentPage += 1);
+            });
+        });
+
+        $('#mainPhotoUpload').change(function (event) {
+            cropImageStart();
+        });
+    </script>
+</body>
+
+</html>
