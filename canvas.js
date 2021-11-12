@@ -93,3 +93,15 @@ function loadPhotoFromWb(id_project) {
         });
     }
 }
+
+function setScale(value) {
+    if (value == "0.5") {
+        document.documentElement.style.cssText = "--width: 450px";
+    } else if (value == '0.75') {
+        document.documentElement.style.cssText = "--width: 675px";
+    } else if (value == '1') {
+        document.documentElement.style.cssText = "--width: 900px";
+    }else if (value === 'smart'){
+        document.documentElement.style.cssText = "min(calc(80vw - 2rem), 900px)";
+    }
+}

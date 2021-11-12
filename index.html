@@ -10,9 +10,9 @@
 
 <body>
     <style>
-        /* :root {
-            --fz: ;
-        } */
+        :root {
+            --width: min(calc(80vw - 2rem), 900px);
+        }
 
         .shadow {
             position: fixed;
@@ -24,18 +24,33 @@
             background-color: rgb(65, 55, 55);
         }
 
-        .container-page-move{
-            position: absolute;
+        .container-page-move {
+            /* position: absolute;
             top: 0;
-            left: 0;
+            left: 0; */
+            display: flex;
+            align-items: flex-start;
         }
-        .container-page-move button:first-child{
+
+        .container-page-move button:nth-child(1) {
             border-radius: 0;
             background-color: hsl(0 0% 50%);
         }
-        .container-page-move button:last-child{
+
+        .container-page-move button:nth-child(2) {
             border-radius: 0 0 10px 0;
             background-color: hsl(0 0% 50%);
+        }
+
+        .canvas-scale {
+            margin-left: 1rem;
+            display: flex;
+            font-size: 1.5rem;
+        }
+
+        .canvas-scale select {
+            margin-left: .6rem;
+            width: 8ch;
         }
 
         .page,
@@ -82,8 +97,16 @@
             gap: .5rem
         }
 
+        .inner-page-1{
+            margin: 1rem auto;
+            width: 50%;
+        }
+
         .inner-page-1>div {
             display: grid;
+        }
+        .inner-page-1 button {
+            font-size: 1.3vw;
         }
 
         #zoomRange {
@@ -102,7 +125,7 @@
         }
 
         .--canvas {
-            margin: 2rem 0 4rem 0;
+            margin: 0 0 4rem 0;
         }
 
         .canvas {
@@ -117,7 +140,6 @@
         .upper-canvas,
         .canvas-container {
             border: 1px solid #000;
-            --width: min(calc(80vw - 2rem), 900px);
             max-width: var(--width);
             max-height: calc(var(--width)*4/3);
             min-width: var(--width);
@@ -174,7 +196,7 @@
             }
 
             .wb-projects img {
-                width: 120px;
+                width: 100px;
             }
 
             .page-1 {
@@ -188,7 +210,7 @@
             p,
             label,
             #zoomRange {
-                font-size: 1.5rem;
+                font-size: 1.3em;
             }
 
             #zoomRange {
@@ -214,22 +236,32 @@
 
             .--canvas {
                 margin: 0;
-            }
-
-            .inner-page-1 {
-                position: absolute;
-                right: calc((100vw - 900px - 3rem - 120px) / 2);
-                transform: translateX(50%) translateY(-50%);
-                top: 50%;
-            }
-
-            .inner-page-1 button {
-                padding: 1rem 2rem;
-                font-size: 2.3vw;
+                margin: 0 auto;
             }
 
             .templates {
                 flex-wrap: wrap;
+            }
+
+            .redactor {
+                margin-right: 1rem;
+            }
+
+            .redactor .tools button {
+                width: 33px;
+                height: 33px;
+            }
+
+            .redactor .tools button:hover {
+                outline: 2px solid rgb(119, 239, 255);
+            }
+
+            .redactor .tools button:focus {
+                outline: 2px solid rgb(119, 239, 255);
+                box-shadow: none;
+            }
+            .redactor .tools button.active{
+                background-color: #2592c1;
             }
         }
 
@@ -237,6 +269,22 @@
     </style>
 
     <!-- ________________________________ -->
+
+    <header>
+        <div class="container-page-move">
+            <button class="return btn">Назад</button>
+            <button class="next-inner-page btn">Вперёд</button>
+            <div class="canvas-scale">
+                <div>Масштаб:</div>
+                <select class="" onchange="setScale($(this).val())">
+                    <option value="smart" selected>smart</option>
+                    <option value="1">1</option>
+                    <option value="0.75">0.75</option>
+                    <option value="0.5">0.5</option>
+                </select>
+            </div>
+        </div>
+    </header>
 
     <div class="continer">
 
@@ -251,22 +299,93 @@
 
         <section class="page page-2">
             <h1 id="title-1" class="title">Загрузка фото</h1>
-            <div class="desktop-content">
+            
+            <section class="inner-page inner-page-1 active">
+                <div class="">
+                    <button class="btn btn-primary" type="button" onclick="$('#mainPhotoUpload').click()">Загрузить
+                        фото</button>
+                    <form class="form form-2 d-none">
+                        <input type="file" id="mainPhotoUpload" class="" name="userfile"
+                            accept="image/jpeg, image/png">
+                    </form>
+                </div>
+            </section>
 
+            <div class="desktop-content">
                 <section class="wb-projects">
                     <img src="https://lk.infograffer.ru/templates/63/cover.jpg">
                     <img src="https://lk.infograffer.ru/templates/62/cover.jpg">
                     <img src="https://lk.infograffer.ru/templates/61/cover.jpg">
                 </section>
 
-                <section class="inner-page inner-page-1 active">
-                    <div class="">
-                        <button class="btn btn-primary" type="button" onclick="$('#mainPhotoUpload').click()">Загрузить
-                            фото</button>
-                        <form class="form form-2 d-none">
-                            <input type="file" id="mainPhotoUpload" class="" name="userfile"
-                                accept="image/jpeg, image/png">
-                        </form>
+                <section class="inner-page inner-page-3 redactor">
+                    <div class="tools">
+                        <p>Инструменты:</p>
+                        <div class="">
+                            <button id="select" title="Выделение" class="btn tool-btns__item btn-sm active" type="button" onclick="">
+                                <i class="bi bi-cursor-fill"></i>
+                            </button>
+                            <button id="move" title="Перемещение" class="btn tool-btns__item btn-sm" type="button" onclick="">
+                                <i class="bi bi-arrows-move"></i>
+                            </button>
+                            <button id="text" title="Текст" class="btn tool-btns__item btn-sm" type="button"
+                                onclick="">
+                                <i class="bi bi-cursor-text"></i>
+                            </button>
+                            <button id="image" title="Изображение" class="btn tool-btns__item btn-sm" type="button"
+                                onclick="">
+                                <i class="bi bi-card-image"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tool text" id="toolText">
+                            <div>
+                                <label class="form-label">Шрифт</label>
+                                <select class="form-select text-font-family" id="textFontFamily" oninput="">
+                                    <option value="PT Sans" style="font-family:'PT Sans'">PT Sans</option>
+                                    <option value="Nunito" style="font-family:'Nunito'">Nunito</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Размер шрифта</label>
+                                <input type="number" id="textFontSize" min="8" max="100" value="40" step="1" oninput="" class="form-select">
+                            </div>
+                            <div>
+                                <label class="form-label">Цвет шрифта</label>
+                                <input type="color" id="textColor" oninput="">
+                            </div>
+                            <div>
+                                <label class="form-label">Цвет фона</label>
+                                <input type="color" id="textbackgroundColor" oninput=""><br>
+                                <button type="button" class="btn btn-info btn-sm" onclick=""> Установить прозрачный цвет фона</button>
+                            </div>
+                            <div class="text__options">
+                                <p>Стиль:</p>
+                                <div class="">
+                                    <label class="form-label">
+                                        <input type="checkbox" id="textBold" name="text[font_style]" onchange="">Жирный
+                                    </label>
+                                    <label class="form-label">
+                                        <input type="checkbox" id="textItalic" name="text[font_style]" onchange="">Курсив
+                                    </label>
+                                    <label class="form-label"><input type="checkbox" id="textUnderline" name="text[font_style]" onchange="">Подчёркнутый
+                                    </label>
+                                    <label class="form-label">
+                                        <input type="checkbox" id="textLineThrough" name="text[font_style]" onchange="">Зачёркнутый
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="form-label">Выравнивание:</p>
+                                <select class="form-select text-text-align" id="textAlign" onchange="">
+                                    <option value="left">по левому краю</option>
+                                    <option value="center">по центру</option>
+                                    <option value="right">по правому краю</option>
+                                </select>
+                            </div>
+                            <div>
+                                <button type="button" onclick="" class="btn btn-primary">Добавить</button>
+                            </div>
                     </div>
                 </section>
 
@@ -294,12 +413,6 @@
             </div>
         </section>
     </div>
-
-    <div class="container-page-move">
-        <button class="return btn">Назад</button>
-        <button class="next-inner-page btn">Вперёд</button>
-    </div>
-
 
     <div class="modal fade" id="ajaxModal" tabindex="-1" aria-labelledby="ajaxModal" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -370,7 +483,14 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"
         integrity="sha512-ooSWpxJsiXe6t4+PPjCgYmVfr1NS5QXJACcR/FPpsdm6kqG1FmQ2SVyg2RXeVuCRBLr0lWHnWJP6Zs1Efvxzww=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"
+        integrity="sha512-v/wOVTkoU7mXEJC3hXnw9AA6v32qzpknvuUF6J2Lbkasxaxn2nYcl+HGB7fr/kChGfCqubVr1n2sq1UFu3Gh1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    </script>
 
     <script src='/cropModal.js'></script>
     <script src='/canvas.js'></script>
@@ -378,8 +498,8 @@
     <script>
         let cropImg = document.getElementById('cropImage');
         let page = 2;
-        let mainFoto = null;
-        let innerPage = mainFoto == null ? 1 : 2;
+        let mainFoto = 'null';
+        let innerPage = mainFoto == null ? 1 : 3;
         let x = true;
 
         function loadCss(url, integrity, referrerpolicy = '') {
@@ -402,15 +522,14 @@
         loadCss('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
             'sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm');
 
+        loadCss('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css');
+
         $(document).ready(function () {
             openPage('.page', page);
             openPage('.inner-page', innerPage);
         });
 
         function openPage(selector, number) {
-            console.log('number: ', number);
-            console.log('selector: ', selector);
-
             function closeAll() {
                 document.querySelectorAll(`${selector}.active`).forEach(item => {
                     item.classList.remove('active');
@@ -425,13 +544,18 @@
                 switch (number) {
                     case 1:
                         $('#title-1').text('Загрузка фото');
-                        $('.return').attr('disabled',true);
-                        $('.container-page-move .next-inner-page').attr('disabled',false);
+                        $('.return').attr('disabled', true);
+                        $('.container-page-move .next-inner-page').attr('disabled', false);
                         break;
                     case 2:
                         $('#title-1').text('Выберете шаблон');
-                        $('.return').attr('disabled',false);
-                        $('.container-page-move .next-inner-page').attr('disabled',true);
+                        $('.return').attr('disabled', false);
+                        $('.container-page-move .next-inner-page').attr('disabled', false);
+                        break;
+                    case 3:
+                        $('#title-1').text('Измените шаблон');
+                        $('.return').attr('disabled', false);
+                        $('.container-page-move .next-inner-page').attr('disabled', true);
                         break;
 
                     default:
@@ -477,6 +601,15 @@
 
         $('#mainPhotoUpload').change(function (event) {
             cropImageStart();
+        });
+
+        $('.redactor .tools button').on('click',function(){
+            const el = $('.redactor .tools button.active')[0];
+
+            if (el != $(this)[0]) {
+                el.classList.remove('active');
+                $(this).addClass('active');
+            }
         });
     </script>
 </body>
