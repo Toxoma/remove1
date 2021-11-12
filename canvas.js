@@ -1,4 +1,5 @@
-let mainFoto;
+let mainFoto = null;
+let ajax_modal = $('#ajaxModal');
 
 fabric = (function (f) {
     var dblClickSubscribers = [];
@@ -22,25 +23,31 @@ fabric = (function (f) {
 }(fabric));
 
 const canvas = this.__canvas = new fabric.Canvas('c');
+let ctx = canvas.getContext('2d');
 
+window.addEventListener('resize', resizeCanvas);
 
-function setImageAsBg() {
-    canvas.add(mainFoto);
-    // canvas.setBackgroundImage(mainFoto, canvas.renderAll.bind(canvas));
+function resizeCanvas(){
+    
 }
 
-function loadMainPhotoFromUrl(url){
+function setImageAsBg() {
+    // canvas.add(mainFoto);
+    canvas.setBackgroundImage(mainFoto, canvas.renderAll.bind(canvas));
+}
+
+function loadMainPhotoFromUrl(url) {
     fabric.Image.fromURL(url,
         function (img) {
             img.set({
                 erasable: false,
                 id: 'mainFoto',
             });
-            
+
             if ($('#scaleToWidth').is(':checked')) {
                 img.scaleToWidth(450);
             }
-            
+
             if ($('#scaleToHeight').is(':checked')) {
                 img.scaleToHeight(600);
             }
@@ -49,4 +56,41 @@ function loadMainPhotoFromUrl(url){
             setImageAsBg();
         }
     );
+}
+
+function loadPhotoFromWb(id_project) {
+    if (confirm('Внимание! При успешной загрузке фотографий все данные проекта будут очищены! Продолжить?')) {
+        let progressModal = $('#progressModal');
+
+        $.get('/project/download-photo/?project_id=' + id_project, function (json) {
+            if (json.status == 'ok') {
+                progressModal.modal('show');
+                $('.project-image-list').html('');
+
+                let total_photos = json.images.length;
+                for (let i = 0; i <= total_photos; i++) {
+                    if (json.images[i] == 'undefined') {
+                        continue;
+                    }
+
+                    let num_photo = i + 1;
+                    $.ajax('/project/check-download-progress/?project_id=' + id_project + '&image=' + json.images[i], {
+                        async: false,
+                        success: function (image) {
+                            progressModal.find('.progress-bar').css('width', (num_photo * 100 / total_photos) + '%');
+                            $('.project-image-list').prepend(image);
+
+                            //!
+                            // if (num_photo == total_photos) {
+                            //     document.location.href = '/project/editor/?id=' + id_project;
+                            // }
+                        }
+                    })
+                }
+            } else {
+                ajax_modal.find('.modal-content').html(json.error);
+                ajax_modal.modal('show');
+            }
+        });
+    }
 }
