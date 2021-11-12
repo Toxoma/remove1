@@ -1,4 +1,3 @@
-let mainFoto = null;
 let ajax_modal = $('#ajaxModal');
 
 fabric = (function (f) {
@@ -28,7 +27,7 @@ let ctx = canvas.getContext('2d');
 window.addEventListener('resize', resizeCanvas);
 
 function resizeCanvas(){
-    
+
 }
 
 function setImageAsBg() {

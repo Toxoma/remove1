@@ -24,6 +24,20 @@
             background-color: rgb(65, 55, 55);
         }
 
+        .container-page-move{
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .container-page-move button:first-child{
+            border-radius: 0;
+            background-color: hsl(0 0% 50%);
+        }
+        .container-page-move button:last-child{
+            border-radius: 0 0 10px 0;
+            background-color: hsl(0 0% 50%);
+        }
+
         .page,
         .inner-page {
             display: none;
@@ -120,6 +134,15 @@
 
         .templates img {
             width: 50px;
+            cursor: pointer;
+        }
+
+        .wb-projects {
+            display: none;
+        }
+
+        .wb-projects img {
+            cursor: pointer;
         }
 
         @media screen and (min-width: 376px) {
@@ -140,9 +163,76 @@
             }
         }
 
-        @media screen and (min-width: 1240px) {
-            
+        @media screen and (min-width: 1400px) {
+            .wb-projects {
+                display: flex;
+                gap: 0.5rem;
+                flex-direction: column;
+                margin-right: 1rem;
+                padding-right: 1rem;
+                border-right: 1px solid #000;
+            }
+
+            .wb-projects img {
+                width: 120px;
+            }
+
+            .page-1 {
+                width: 33vw;
+            }
+
+            h1 {
+                font-size: 3rem;
+            }
+
+            p,
+            label,
+            #zoomRange {
+                font-size: 1.5rem;
+            }
+
+            #zoomRange {
+                width: 5ch;
+            }
+
+            #cropModal label input {
+                transform: scale(1.4);
+            }
+
+            .form-1 {
+                gap: 1rem;
+            }
+
+            .form-1 * {
+                font-size: 2.1rem;
+            }
+
+            .desktop-content {
+                display: flex;
+                justify-content: left;
+            }
+
+            .--canvas {
+                margin: 0;
+            }
+
+            .inner-page-1 {
+                position: absolute;
+                right: calc((100vw - 900px - 3rem - 120px) / 2);
+                transform: translateX(50%) translateY(-50%);
+                top: 50%;
+            }
+
+            .inner-page-1 button {
+                padding: 1rem 2rem;
+                font-size: 2.3vw;
+            }
+
+            .templates {
+                flex-wrap: wrap;
+            }
         }
+
         */
     </style>
 
@@ -160,8 +250,15 @@
         </section>
 
         <section class="page page-2">
-            <h1 class="title">Загрузка фото</h1>
-            <div class="">
+            <h1 id="title-1" class="title">Загрузка фото</h1>
+            <div class="desktop-content">
+
+                <section class="wb-projects">
+                    <img src="https://lk.infograffer.ru/templates/63/cover.jpg">
+                    <img src="https://lk.infograffer.ru/templates/62/cover.jpg">
+                    <img src="https://lk.infograffer.ru/templates/61/cover.jpg">
+                </section>
+
                 <section class="inner-page inner-page-1 active">
                     <div class="">
                         <button class="btn btn-primary" type="button" onclick="$('#mainPhotoUpload').click()">Загрузить
@@ -172,6 +269,7 @@
                         </form>
                     </div>
                 </section>
+
                 <section class="inner-page inner-page-2">
                     <div class="templates">
                         <img src="https://lk.infograffer.ru/templates/64/cover.jpg">
@@ -186,16 +284,21 @@
                         <img src="https://lk.infograffer.ru/templates/64/cover.jpg">
                     </div>
                 </section>
+
                 <section class="--canvas">
                     <div class="canvas">
                         <canvas id="c" width="450" height="600"></canvas>
                     </div>
                 </section>
+
             </div>
         </section>
     </div>
 
-
+    <div class="container-page-move">
+        <button class="return btn">Назад</button>
+        <button class="next-inner-page btn">Вперёд</button>
+    </div>
 
 
     <div class="modal fade" id="ajaxModal" tabindex="-1" aria-labelledby="ajaxModal" aria-hidden="true">
@@ -275,7 +378,8 @@
     <script>
         let cropImg = document.getElementById('cropImage');
         let page = 2;
-        let innerPage = 2;
+        let mainFoto = null;
+        let innerPage = mainFoto == null ? 1 : 2;
         let x = true;
 
         function loadCss(url, integrity, referrerpolicy = '') {
@@ -304,8 +408,8 @@
         });
 
         function openPage(selector, number) {
-            console.log('selector: ', selector);
             console.log('number: ', number);
+            console.log('selector: ', selector);
 
             function closeAll() {
                 document.querySelectorAll(`${selector}.active`).forEach(item => {
@@ -315,6 +419,25 @@
             closeAll();
 
             document.querySelector(`${selector}-${number}`).classList.add('active');
+
+
+            if (selector === '.inner-page') {
+                switch (number) {
+                    case 1:
+                        $('#title-1').text('Загрузка фото');
+                        $('.return').attr('disabled',true);
+                        $('.container-page-move .next-inner-page').attr('disabled',false);
+                        break;
+                    case 2:
+                        $('#title-1').text('Выберете шаблон');
+                        $('.return').attr('disabled',false);
+                        $('.container-page-move .next-inner-page').attr('disabled',true);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
         }
 
         //Обработка форм
@@ -343,6 +466,12 @@
         document.querySelectorAll('.next-inner-page').forEach(item => {
             item.addEventListener('click', function (event) {
                 openPage('.inner-page', innerPage += 1);
+            });
+        });
+
+        document.querySelectorAll('.return').forEach(item => {
+            item.addEventListener('click', function (event) {
+                openPage('.inner-page', innerPage -= 1);
             });
         });
 
