@@ -6,12 +6,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <style>
         :root {
             --width: min(calc(80vw - 2rem), 900px);
+        }
+
+        .d-none {
+            display: none !important;
+        }
+
+        .mistake {
+            display: none;
+            text-align: center;
+            font-size: 1.5em;
+            color: hsl(0 60% 50%)
+        }
+
+        .mistake.show {
+            display: block;
         }
 
         .shadow {
@@ -35,11 +51,13 @@
         .container-page-move button:nth-child(1) {
             border-radius: 0;
             background-color: hsl(0 0% 50%);
+            font-size: 1.2rem;
         }
 
         .container-page-move button:nth-child(2) {
             border-radius: 0 0 10px 0;
             background-color: hsl(0 0% 50%);
+            font-size: 1.2rem;
         }
 
         .canvas-scale {
@@ -79,12 +97,19 @@
             font-size: max(2em, 14px);
         }
 
+        input:focus {
+            border: 2px solid green;
+            border-radius: 5px;
+            outline: none;
+        }
+
         .continer {
             margin: 1rem;
             /* overflow: hidden; */
         }
 
-        .page-1 {
+        .page-1,
+        .page-2 {
             top: 50%;
             left: 50%;
             transform: translateX(-50%) translateY(-50%);
@@ -92,21 +117,19 @@
             width: min(75%, 500px);
         }
 
-        .form-1 {
+        .form-1,
+        .page-2>div {
             display: grid;
             gap: .5rem
         }
 
-        .inner-page-1{
-            margin: 1rem auto;
-            width: 50%;
+        .form-1 input,
+        .page-2 input {
+            font-size: 2em;
         }
 
-        .inner-page-1>div {
-            display: grid;
-        }
-        .inner-page-1 button {
-            font-size: 1.3vw;
+        .page-2 button {
+            font-size: 2em;
         }
 
         #zoomRange {
@@ -165,6 +188,19 @@
 
         .wb-projects img {
             cursor: pointer;
+        }
+
+        .save-canvas {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .save-canvas button {
+            border-radius: 0 0 0 10px;
+            background-color: hsl(0 0% 50%);
+            font-size: 1.2rem;
+            padding: 0.2rem 0.4rem 0.2rem 0.4rem;
         }
 
         @media screen and (min-width: 376px) {
@@ -260,18 +296,17 @@
                 outline: 2px solid rgb(119, 239, 255);
                 box-shadow: none;
             }
-            .redactor .tools button.active{
+
+            .redactor .tools button.active {
                 background-color: #2592c1;
             }
         }
-
-        */
     </style>
 
     <!-- ________________________________ -->
 
     <header>
-        <div class="container-page-move">
+        <div class="container-page-move d-none">
             <button class="return btn">Назад</button>
             <button class="next-inner-page btn">Вперёд</button>
             <div class="canvas-scale">
@@ -293,43 +328,45 @@
             <label for="form-1-phone">Номер телефона</label>
             <form class="form form-1">
                 <input id="form-1-phone" type="tel" name="phone" class="form-control">
-                <input class="next-page btn btn-success" type="submit">
+                <input class="next-page btn" type="submit">
             </form>
         </section>
 
         <section class="page page-2">
-            <h1 id="title-1" class="title">Загрузка фото</h1>
-            
-            <section class="inner-page inner-page-1 active">
-                <div class="">
-                    <button class="btn btn-primary" type="button" onclick="$('#mainPhotoUpload').click()">Загрузить
-                        фото</button>
-                    <form class="form form-2 d-none">
-                        <input type="file" id="mainPhotoUpload" class="" name="userfile"
-                            accept="image/jpeg, image/png">
-                    </form>
+            <h1>Введите артикул товара на Wildberries</h1>
+            <label for="articul">Артикул</label>
+            <div class="">
+                <input type="text" id="articul" />
+                <button class="btn" onclick="loadWBPhoto($('#articul').val())">Загрузить</button>
+                <div class="mistake">
+                    <div>Фото не найдено!<br>Впишите в поле реальный артикул</div>
                 </div>
-            </section>
+            </div>
+        </section>
+
+        <section class="page page-3">
+            <h1 id="title-1" class="title">Выберете шаблон</h1>
 
             <div class="desktop-content">
-                <section class="wb-projects">
+                <!-- <section class="wb-projects">
                     <img src="https://lk.infograffer.ru/templates/63/cover.jpg">
                     <img src="https://lk.infograffer.ru/templates/62/cover.jpg">
                     <img src="https://lk.infograffer.ru/templates/61/cover.jpg">
-                </section>
+                </section> -->
 
-                <section class="inner-page inner-page-3 redactor">
+                <section class="inner-page inner-page-2 redactor">
                     <div class="tools">
                         <p>Инструменты:</p>
                         <div class="">
-                            <button id="select" title="Выделение" class="btn tool-btns__item btn-sm active" type="button" onclick="">
+                            <button id="select" title="Выделение" class="btn tool-btns__item btn-sm active"
+                                type="button" onclick="">
                                 <i class="bi bi-cursor-fill"></i>
                             </button>
-                            <button id="move" title="Перемещение" class="btn tool-btns__item btn-sm" type="button" onclick="">
+                            <button id="move" title="Перемещение" class="btn tool-btns__item btn-sm" type="button"
+                                onclick="">
                                 <i class="bi bi-arrows-move"></i>
                             </button>
-                            <button id="text" title="Текст" class="btn tool-btns__item btn-sm" type="button"
-                                onclick="">
+                            <button id="text" title="Текст" class="btn tool-btns__item btn-sm" type="button" onclick="">
                                 <i class="bi bi-cursor-text"></i>
                             </button>
                             <button id="image" title="Изображение" class="btn tool-btns__item btn-sm" type="button"
@@ -339,57 +376,61 @@
                         </div>
                     </div>
                     <div class="tool text" id="toolText">
-                            <div>
-                                <label class="form-label">Шрифт</label>
-                                <select class="form-select text-font-family" id="textFontFamily" oninput="">
-                                    <option value="PT Sans" style="font-family:'PT Sans'">PT Sans</option>
-                                    <option value="Nunito" style="font-family:'Nunito'">Nunito</option>
-                                </select>
+                        <div>
+                            <label class="form-label">Шрифт</label>
+                            <select class="form-select text-font-family" id="textFontFamily" oninput="">
+                                <option value="PT Sans" style="font-family:'PT Sans'">PT Sans</option>
+                                <option value="Nunito" style="font-family:'Nunito'">Nunito</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Размер шрифта</label>
+                            <input type="number" id="textFontSize" min="8" max="100" value="40" step="1" oninput=""
+                                class="form-select">
+                        </div>
+                        <div>
+                            <label class="form-label">Цвет шрифта</label>
+                            <input type="color" id="textColor" oninput="">
+                        </div>
+                        <div>
+                            <label class="form-label">Цвет фона</label>
+                            <input type="color" id="textbackgroundColor" oninput=""><br>
+                            <button type="button" class="btn btn-info btn-sm" onclick=""> Установить прозрачный цвет
+                                фона</button>
+                        </div>
+                        <div class="text__options">
+                            <p>Стиль:</p>
+                            <div class="">
+                                <label class="form-label">
+                                    <input type="checkbox" id="textBold" name="text[font_style]" onchange="">Жирный
+                                </label>
+                                <label class="form-label">
+                                    <input type="checkbox" id="textItalic" name="text[font_style]" onchange="">Курсив
+                                </label>
+                                <label class="form-label"><input type="checkbox" id="textUnderline"
+                                        name="text[font_style]" onchange="">Подчёркнутый
+                                </label>
+                                <label class="form-label">
+                                    <input type="checkbox" id="textLineThrough" name="text[font_style]"
+                                        onchange="">Зачёркнутый
+                                </label>
                             </div>
-                            <div>
-                                <label class="form-label">Размер шрифта</label>
-                                <input type="number" id="textFontSize" min="8" max="100" value="40" step="1" oninput="" class="form-select">
-                            </div>
-                            <div>
-                                <label class="form-label">Цвет шрифта</label>
-                                <input type="color" id="textColor" oninput="">
-                            </div>
-                            <div>
-                                <label class="form-label">Цвет фона</label>
-                                <input type="color" id="textbackgroundColor" oninput=""><br>
-                                <button type="button" class="btn btn-info btn-sm" onclick=""> Установить прозрачный цвет фона</button>
-                            </div>
-                            <div class="text__options">
-                                <p>Стиль:</p>
-                                <div class="">
-                                    <label class="form-label">
-                                        <input type="checkbox" id="textBold" name="text[font_style]" onchange="">Жирный
-                                    </label>
-                                    <label class="form-label">
-                                        <input type="checkbox" id="textItalic" name="text[font_style]" onchange="">Курсив
-                                    </label>
-                                    <label class="form-label"><input type="checkbox" id="textUnderline" name="text[font_style]" onchange="">Подчёркнутый
-                                    </label>
-                                    <label class="form-label">
-                                        <input type="checkbox" id="textLineThrough" name="text[font_style]" onchange="">Зачёркнутый
-                                    </label>
-                                </div>
-                            </div>
-                            <div>
-                                <p class="form-label">Выравнивание:</p>
-                                <select class="form-select text-text-align" id="textAlign" onchange="">
-                                    <option value="left">по левому краю</option>
-                                    <option value="center">по центру</option>
-                                    <option value="right">по правому краю</option>
-                                </select>
-                            </div>
-                            <div>
-                                <button type="button" onclick="" class="btn btn-primary">Добавить</button>
-                            </div>
+                        </div>
+                        <div>
+                            <p class="form-label">Выравнивание:</p>
+                            <select class="form-select text-text-align" id="textAlign" onchange="">
+                                <option value="left">по левому краю</option>
+                                <option value="center">по центру</option>
+                                <option value="right">по правому краю</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button type="button" onclick="" class="btn btn-primary">Добавить</button>
+                        </div>
                     </div>
                 </section>
 
-                <section class="inner-page inner-page-2">
+                <section class="inner-page inner-page-1 active">
                     <div class="templates">
                         <img src="https://lk.infograffer.ru/templates/64/cover.jpg">
                         <img src="https://lk.infograffer.ru/templates/64/cover.jpg">
@@ -414,77 +455,14 @@
         </section>
     </div>
 
-    <div class="modal fade" id="ajaxModal" tabindex="-1" aria-labelledby="ajaxModal" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content"></div>
-        </div>
+    <div class="save-canvas d-none">
+        <button onclick="downloadImage('jpeg')">Сохранить как jpeg</button>
     </div>
-
-    <div class="modal fade show" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cropModalLabel">Кадрировать</h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="modal-body__zoom d-flex align-items-center mb-2">
-                        <p class="me-2" style="padding: 0; margin: 0">Масштаб</p>
-                        <input id="zoomRange" type="number" value="100" step="1" />
-                    </div>
-                    <div class="mb-3">
-                        <label><input type="checkbox" id="scaleToWidth" checked="" value="1"> Ширина по размеру
-                            Wilberriesе</label>
-                        <label><input type="checkbox" id="scaleToHeight" checked value="1"> Высота по размеру
-                            Wilberries</label>
-                        <label><input type="checkbox" id="concatWidthHeight" checked value="1"> Пропорции 3/4</label>
-                    </div>
-                    <div class="img-container">
-                        <img id="cropImage" src="#" width="100%" alt="Picture">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                    <button type="button" id="button"
-                        class="btn btn-primary save-crop-image next-inner-page">Применить</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cropModalLabel">Процесс загрузки фотографий</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                            style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- <div class="shadow d-none"></div> -->
 
     <!-- ________________________________ -->
     <script src="https://unpkg.com/fabric@4.6.0/dist/fabric.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"
-        integrity="sha512-ooSWpxJsiXe6t4+PPjCgYmVfr1NS5QXJACcR/FPpsdm6kqG1FmQ2SVyg2RXeVuCRBLr0lWHnWJP6Zs1Efvxzww=="
-        crossorigin="anonymous" referrerpolicy="no-referrer">
-    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"
         integrity="sha512-v/wOVTkoU7mXEJC3hXnw9AA6v32qzpknvuUF6J2Lbkasxaxn2nYcl+HGB7fr/kChGfCqubVr1n2sq1UFu3Gh1w=="
@@ -492,37 +470,28 @@
 
     </script>
 
-    <script src='/cropModal.js'></script>
-    <script src='/canvas.js'></script>
+    <script src='/canvas.js'></script> -->
 
     <script>
         let cropImg = document.getElementById('cropImage');
-        let page = 2;
-        let mainFoto = 'null';
-        let innerPage = mainFoto == null ? 1 : 3;
+        let page = 1;
+        let mainFoto = null;
+        let innerPage = mainFoto == null ? 1 : 2;
         let x = true;
 
-        function loadCss(url, integrity, referrerpolicy = '') {
-            return new Promise(resolve => {
-                var link = document.createElement("link");
-                link.type = "text/css";
-                link.rel = "stylesheet";
-                link.href = url;
-                link.crossOrigin = "anonymous";
-                link.integrity = integrity;
-                link.referrerpolicy = referrerpolicy;
-                document.getElementsByTagName("head")[0].appendChild(link);
-                resolve(!x);
-            });
-        }
-        loadCss('https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.css',
-            'sha512-+VDbDxc9zesADd49pfvz7CgsOl2xREI/7gnzcdyA9XjuTxLXrdpuz21VVIqc5HPfZji2CypSbxx1lgD7BgBK5g==',
-            'no-referrer');
-
-        loadCss('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
-            'sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm');
-
-        loadCss('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css');
+        // function loadCss(url, integrity, referrerpolicy = '') {
+        //     return new Promise(resolve => {
+        //         var link = document.createElement("link");
+        //         link.type = "text/css";
+        //         link.rel = "stylesheet";
+        //         link.href = url;
+        //         link.crossOrigin = "anonymous";
+        //         link.integrity = integrity;
+        //         link.referrerpolicy = referrerpolicy;
+        //         document.getElementsByTagName("head")[0].appendChild(link);
+        //         resolve(!x);
+        //     });
+        // }
 
         $(document).ready(function () {
             openPage('.page', page);
@@ -530,6 +499,9 @@
         });
 
         function openPage(selector, number) {
+            console.log('selector: ', selector);
+            console.log('number: ', number);
+
             function closeAll() {
                 document.querySelectorAll(`${selector}.active`).forEach(item => {
                     item.classList.remove('active');
@@ -543,19 +515,16 @@
             if (selector === '.inner-page') {
                 switch (number) {
                     case 1:
-                        $('#title-1').text('Загрузка фото');
+                        $('#title-1').text('Выберете шаблон');
                         $('.return').attr('disabled', true);
                         $('.container-page-move .next-inner-page').attr('disabled', false);
+                        $('.save-canvas').addClass('d-none');
                         break;
                     case 2:
-                        $('#title-1').text('Выберете шаблон');
-                        $('.return').attr('disabled', false);
-                        $('.container-page-move .next-inner-page').attr('disabled', false);
-                        break;
-                    case 3:
                         $('#title-1').text('Измените шаблон');
                         $('.return').attr('disabled', false);
                         $('.container-page-move .next-inner-page').attr('disabled', true);
+                        $('.save-canvas').removeClass('d-none');
                         break;
 
                     default:
@@ -603,7 +572,7 @@
             cropImageStart();
         });
 
-        $('.redactor .tools button').on('click',function(){
+        $('.redactor .tools button').on('click', function () {
             const el = $('.redactor .tools button.active')[0];
 
             if (el != $(this)[0]) {
@@ -611,6 +580,67 @@
                 $(this).addClass('active');
             }
         });
+
+        function loadWBPhoto(acticul) {
+            const articulPart = acticul.substr(0, 4);
+            const url = 'https://images.wbstatic.net/big/new/' + articulPart + '0000/' + acticul + '-1.jpg';
+            $.ajax({
+                url: url,
+                success: function (resp) {
+                    $('.mistake').removeClass('show');
+                    openPage('.page', page += 1);
+                    fabric.Image.fromURL(url, function (img) {
+                        img.scaleToHeight(600);
+                        img.set({
+                            left: 0,
+                            top: 0,
+                            ownType: 'mainFoto',
+                        });
+                        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+                    },{
+                        crossOrigin: 'anonymous',
+                    });
+
+                    $('.container-page-move').removeClass('d-none');
+                },
+                error: function () {
+                    $('.mistake').addClass('show');
+                }
+            })
+        }
+
+        $('.templates img').on('click', function () {
+            openPage('.inner-page', innerPage += 1);
+        });
+
+        function downloadImage(ext) {
+            if (ext === 'jpeg') {
+                canvas.backgroundColor = '#ffffff';
+                canvas.requestRenderAll();
+            }
+
+            const base64 = canvas.toDataURL({
+                format: ext,
+                enableRetinaScaling: true
+            });
+
+            let currentDate = new Date();
+            let time = (currentDate.getMonth() + 1) + '-' + currentDate.getDate() + '-' + currentDate.getHours() +
+                '-' + currentDate.getMinutes() + '-' + currentDate.getSeconds();
+
+            // $.ajax('/project/export/?type=image&id_project=' + id_project + '&id_image=' + id_image, {
+            //     type: 'post',
+            //     data: {
+            //         data: base64,
+            //         ext: ext
+            //     }
+            // });
+
+            const link = document.createElement("a");
+            link.href = base64;
+            link.download = `infograffer-${time}.${ext}`;
+            link.click();
+        }
     </script>
 </body>
 
