@@ -369,92 +369,91 @@
        };
    });
    
-           let cropImg = document.getElementById('cropImage');
-           let page = 3;
-           let mainFoto = null;
-           let innerPage = mainFoto == null ? 1 : 2;
-           let x = true;
-           const fontsMas = [
-               'PT Sans',
-               'Nunito',
-               'Lobster',
-               'Pacifico',
-           ];
-   
-           $(document).ready(function () {
-               preLoadFonts();
-               openPage('.page', page);
-               openPage('.inner-page', innerPage);
-           });
-   
-           function openPage(selector, number, flag=false) {
-               function closeAll() {
-                   document.querySelectorAll(`${selector}.active`).forEach(item => {
-                       item.classList.remove('active');
-                   });
-               }
-               closeAll();
-   
-               document.querySelector(`${selector}-${number}`).classList.add('active');
-   
-               if (selector === '.page') {
-                   if (number === 3) {
-                       $('.container-page-move').removeClass('d-none');
-                   }else{
-                       $('.container-page-move').addClass('d-none');
-                   }
-               }
-   
-               if (flag) {
-                   $('.page-2 .hide-elem').hide();
-                   $('.page-2 .change-elem').text('Загрузите фотографию');
-               }
-   
-   
-               if (selector === '.inner-page') {
-                   switch (number) {
-                       case 1:
-                           $('#title-1').text('Выберете шаблон');
-                           $('.container-page-move .next-inner-page').attr('disabled', false);
-                           $('.save-canvas').addClass('d-none');
-                           $('.tool-btns').css('display', 'none');
-                           break;
-                       case 2:
-                           $('.tool-btns').css('display', 'flex');
-                           $('#title-1').text('Измените шаблон');
-                           $('.container-page-move .next-inner-page').attr('disabled', true);
-                           $('.save-canvas').removeClass('d-none');
-                           break;
-   
-                       default:
-                           break;
-                   }
-               }
-           }
-   
-   
-           //переключение страниц
-           document.querySelectorAll('.next-page').forEach(item => {
-               item.addEventListener('click', function (event) {
-                   openPage('.page', page += 1);
-               });
-           });
-   
-           document.querySelectorAll('.next-inner-page').forEach(item => {
-               item.addEventListener('click', function (event) {
-                   openPage('.inner-page', innerPage += 1);
-               });
-           });
-   
-           $('.redactor .tools button').on('click', function () {
-               const el = $('.redactor .tools button.active')[0];
-   
-               if (el != $(this)[0]) {
-                   el.classList.remove('active');
-                   $(this).addClass('active');
-               }
-           });
-   
+   let cropImg = document.getElementById('cropImage');
+        let page = 3;
+        let mainFoto = null;
+        let innerPage = mainFoto == null ? 1 : 2;
+        let x = true;
+        const fontsMas = [
+            'PT Sans',
+            'Nunito',
+            'Lobster',
+            'Pacifico',
+        ];
+
+        $(document).ready(function () {
+            preLoadFonts();
+            openPage('.page', page);
+            openPage('.inner-page', innerPage);
+        });
+
+        function openPage(selector, number, flag=false) {
+            function closeAll() {
+                document.querySelectorAll(`${selector}.active`).forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+            closeAll();
+
+            document.querySelector(`${selector}-${number}`).classList.add('active');
+
+            if (selector === '.page') {
+                if (number === 3) {
+                    $('.container-page-move').removeClass('d-none');
+                }else{
+                    $('.container-page-move').addClass('d-none');
+                }
+            }
+
+            if (flag) {
+                $('.page-2 .hide-elem').hide();
+                $('.page-2 .change-elem').text('Загрузите фотографию');
+            }
+
+
+            if (selector === '.inner-page') {
+                switch (number) {
+                    case 1:
+                        $('#title-1').text('Выберете шаблон');
+                        $('.container-page-move .next-inner-page').attr('disabled', false);
+                        $('.save-canvas').addClass('d-none');
+                        $('.tool-btns').css('display', 'none');
+                        break;
+                    case 2:
+                        $('.tool-btns').css('display', 'flex');
+                        $('#title-1').text('Измените шаблон');
+                        $('.container-page-move .next-inner-page').attr('disabled', true);
+                        $('.save-canvas').removeClass('d-none');
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        //переключение страниц
+        document.querySelectorAll('.next-page').forEach(item => {
+            item.addEventListener('click', function (event) {
+                openPage('.page', page += 1);
+            });
+        });
+
+        document.querySelectorAll('.next-inner-page').forEach(item => {
+            item.addEventListener('click', function (event) {
+                openPage('.inner-page', innerPage += 1);
+            });
+        });
+
+        $('.redactor .tools button').on('click', function () {
+            const el = $('.redactor .tools button.active')[0];
+
+            if (el != $(this)[0]) {
+                el.classList.remove('active');
+                $(this).addClass('active');
+            }
+        });
+
         function loadWBPhoto(acticul) {
             const articulPart = acticul.substr(0, acticul.length - 4);
             const url = 'https://images.wbstatic.net/big/new/' + articulPart + '0000/' + acticul + '-1.jpg';
@@ -485,337 +484,350 @@
                 }
             })
         }
-   
-           function downloadImage(ext) {
-               try {
-                   if (ext === 'jpeg') {
-                       canvas.backgroundColor = '#ffffff';
-                       canvas.requestRenderAll();
-                   }
-   
-                   $.ajax({
-                       url: 'https://stage.infograffer.ru/editor/export/templates/1/sign.png',
-                       xhrFields: {
-                           responseType: 'blob'
-                       },
-                       success: function (data) {
-                           let url = URL.createObjectURL(data);
-                           fabric.Image.fromURL(url, function (img) {
-                               img.set({
-                                   left: 0,
-                                   top: 0,
-                               });
-                               canvas.add(img);
-   
-                               try {
-                                   const base64 = canvas.toDataURL({
-                                       format: 'jpeg',
-                                       enableRetinaScaling: true,
-                                       multiplier: 0.5,
-                                   });
-                                   
-                                   let currentDate = new Date();
-                                   let time = (currentDate.getMonth() + 1) + '-' + currentDate.getDate() + '-' + currentDate.getHours() +
-                                   '-' + currentDate.getMinutes() + '-' + currentDate.getSeconds();
-   
-                                   const link = document.createElement("a");
-                                   link.href = base64;
-                                   link.download = `infograffer-${time}.${ext}`;
-                                   link.click();
-                               } catch (error) {
-                                   canvas.remove(img);
-                                   canvas.renderAll();
-                               }
-   
-   
-   
-                               canvas.remove(img);
-                               canvas.renderAll();
-   
-                           });
-                       },
-                       error: function (jqXHR, exception) {
-                           let errMsg = '';
-                           let text = 'Произошла ошибка!';
-   
-                           if (jqXHR.status === 0) {
-                               text += `\nОшибка: Not connect. Verify Network`
-                               errMsg+= 'error>> Not connect. Verify Network';
-                           } else if (jqXHR.status == 404) {
-                               text += `\nОшибка: Requested page not found (404)`;
-                               errMsg+= 'error>> Requested page not found (404)';
-                           } else if (jqXHR.status == 500) {
-                               text += `\nОшибка: Internal Server Error (500)`;
-                               errMsg+= 'error>> Internal Server Error (500)';
-                           } else if (exception === 'parsererror') {
-                               text += `\nОшибка: Requested JSON parse failed`;
-                               errMsg+= 'error>> Requested JSON parse failed';
-                           } else if (exception === 'timeout') {
-                               text += `\nОшибка: Time out error`;
-                               errMsg+= 'error>> Time out error';
-                           } else if (exception === 'abort') {
-                               text += `\nОшибка: Ajax request aborted`;
-                               errMsg+= 'error>> Ajax request aborted';
-                           } else {
-                               text += `\nОшибка: Uncaught Error\n${jqXHR.responseText}`;
-                               errMsg+= 'error>> Uncaught Error' + jqXHR.responseText;
-                           }
-   
-                           text += `\nПожалуйста, перезагрузите страницу. Если ошибка повториться, напишите нам в чат`;
-                           alert(text);
-                           throw errMsg;
-                       }
-                   });
-   
-   
-               } catch (error) {
-                   console.error('error >>> ', error);
-               }
-           }
-   
-           function closeAll(selector, classValue) {
-               document.querySelectorAll(selector).forEach(item => {
-                   item.classList.remove(classValue);
-               });
-           }
-   
-           function openOptions(value) {
-               closeAll('.redactor .tool.active', 'active');
-               $(`.redactor .tool.${value}`).addClass('active');
-           }
-   
-           $('.tool-btns button').on('click', function () {
-               if ($(this).hasClass('active') || $(this).hasClass('save') || $(this).hasClass('return')) {
-                   return;
-               };
-   
-               closeAll('.tool-btns button.active', 'active');
-   
-               $(this).addClass('active');
-               openOptions($(this).attr('id'));
-           });
-   
-           $('.tool-btns button.return').on('click',function(){
-               openPage('.inner-page', innerPage -= 1);
-           });
-   
-           function addText() {
-               if (selectedGroup?.length) {
-                   groupUpElements();
-               }
-   
-               let text = new fabric.IText("Текст", {
-                   left: 100,
-                   top: 100,
-                   padding: 10,
-                   text: $('#newTextContent').val()?$('#newTextContent').val(): 'текст',
-                   textBackgroundColor: 'transparent',
-                   fontSize: $('#textFontSize').val(),
-                   fontFamily: $('#textFontFamily').val()?$('#textFontFamily').val(): 'PT Sans',
-                   fill: $('#textColor').val(),
-                   objectCaching: false,
-   
-                   fontWeight: $('#textBold').is(':checked') ? 'bold' : '',
-                   linethrough: $('#textLineThrough').is(':checked') ? true : false,
-                   underline: $('#textUnderline').is(':checked') ? true : false,
-                   fontStyle: $('#textItalic').is(':checked') ? 'italic' : '',
-               });
-   
-               canvas.add(text);
-               canvas.setActiveObject(text);
-               canvas.renderAll();
-               activeTarget = text;
-               textTarget = text;
-               updateTextOptions(text);
-   
-                $('#textContent').show();
-                $('#newTextContent').val('');
-           }
-   
-           function removeInnerStyle(obj, attr) {
-               if (!attr || !obj || !obj.styles[0] || !Object.keys(obj.styles[0]).length) {
-                   return;
-               }
-   
-               const clear = function (_this, key) {
-                   if (!Object.keys(_this).length) {
-                       delete obj.styles[0][key];
-                   }
-               }
-   
-               $.each(obj.styles[0], function (key) {
-                   if ($(this)[0][attr] || $(this)[0][attr] === '') {
-                       delete $(this)[0][attr];
-                       clear($(this)[0], key);
-                   }
-               });
-           }
-   
-           function findInnerElems(obj, cb){
-               if (obj?._objects && (obj?.type === 'group' || obj?.type === 'activeSelection')) {
-                   obj._objects.forEach(el => {
-                       return findInnerElems(el, cb);
-                   });
-               } else {
-                   cb(obj);
-               }
-           }
-   
-           function changeText(attribute, value) {
-               const start = (object) => {
-                   if (object ?.type === 'textbox' ||
-                       object ?.type === 'i-text' ||
-                       object ?.type === 'text') {
-                       if (object ?.setSelectionStyles && object ?.isEditing) {
-                           let style = {};
-                           style[attribute] = value;
-                           object.setSelectionStyles(style);
-                           object.setCoords();
-                       } else {
-                           removeInnerStyle(object, attribute);
-                           object.set(attribute, value);
-                       }
-                       canvas.renderAll();
-                   }
-               };
-   
-               let obj = canvas.getActiveObject();
-               if (obj) {
-                   findInnerElems(obj, start);
-                   if (obj.type === 'group') {
-                       obj.addWithUpdate();
-                   }
-               }
-           }
-   
-           //для предварительной прогрузки шрифтов
-           function preLoadFonts() {
-               fontsMas.forEach((font) => {
-                   canvas.add(new fabric.Textbox("тест", {
-                       fill: '#000',
-                       fontFamily: font,
-                   }));
-                   canvas.requestRenderAll();
-               });
-   
-               canvas.forEachObject(function (object) {
-                   if (object.ownType !== 'mainFoto') {
-                       canvas.remove(object);
-                   }
-               });
-               canvas.setBackgroundColor('');
-               canvas.requestRenderAll();
-               
-               fabric.Object.prototype.hasControls = false;
-           }
-   
-           $('.tool.icons .accordion .card-header').on('click', function(){
-               let _this = $(this);
-               $('.tool.icons .accordion .card-content').each(function(){
-                   if ($(this)[0] !== _this.next()[0]){
-                       $(this).slideUp();
-                   }
-               });
-   
-               $(this).next().slideToggle();
-           });
-   
-           $('.icon-category select').on('change', function () {
-               let id_category = $(this).val();
-               if (id_category <= 0) {
-                   return;
-               }
-   
-               $.ajax('https://stage.infograffer.ru/icon/packs/?id_category=' + id_category, {
-                   dataType: 'json',
-                   beforeSend: function () {
-   
-                   },
-                   success: function (packs) {
-                       $('#iconPackList .list').html(packs);
-                       $('.accordion .iconPackList-header').click();
-                       $('#iconPackList > div > p > i').append($('#iconPackList > div > select'));
-                   }
-               });
-           });
-   
-           $('#iconPackList').on('click', '[data-id_pack]', function () {
-               let id_pack = $(this).data('id_pack');
-   
-               if (id_pack > 0) {
-                   $.ajax('https://stage.infograffer.ru/icon/icons/?id_pack=' + id_pack, {
-                       dataType: 'json',
-                       beforeSend: function () {
-   
-                       },
-                       success: function (icons) {
-                           $('#iconList .list').html(icons);
-                           $('.accordion .iconList-header').click();
-                           $('#iconList .list p, #iconList .list select').hide();
-                       }
-                   });
-               }
-           });
-   
-           $('#iconPackList').on('click', 'a[href="#"]', function(e){
-               e.preventDefault();
-           });
-   
-   
-           $('#iconPackList').on('change', '[name="packs_page"]', function () {
-               let id_category = $(this).data('id_category');
-               let page = $(this).val();
-               console.log('page: ', page);
-   
-               $.ajax('https://stage.infograffer.ru/icon/packs/?id_category=' + id_category + '&page=' + page, {
-                   dataType: 'json',
-                   beforeSend: function () {
-   
-                   },
-                   success: function (packs) {
-                       $('#iconPackList .list').html(packs);
-                       $('#iconPackList > div > p > i').append($('#iconPackList > div > select'));
-                   }
-               })
-           })
-   
-           $('#iconList').on('click', '.add-icon', function () {
-               let url = $(this).attr('src');
-               fabric.Image.fromURL(url, function (img) {
-                   img.set({
-                       left: 10,
-                       top: 10,
-                       ownType: 'icon',
-                   });
-                   img.scale(0.3);
-                   canvas.add(img);
-               }, {
-               crossOrigin: 'anonymous',
-               });
-           });
-   
-           $('.templates').on('click', 'img', function () {
-               let id_template = $(this).data('template-id');
-   
-               if (id_template>0) {
-                   templates[id_template].backgroundImage = mainFoto;
-                   templates[id_template].backgroundColor = '#fff';
-                   canvas.loadFromJSON(templates[id_template]);
-                   canvas.renderAll();
-               }
-           });
-   
-   
-           let doubleClicked = {
-               flag: false,
-               target: null,
-           };
-           let selectedGroup = [];
-           let masForGroupUp = [];
-           let is_edit_group = false;
-           let activeTarget = null;
-           let textTarget = null;
-   
+
+        function findProblem(jqXHR, exception){
+            let errMsg = '';
+                        let text = 'Произошла ошибка!';
+
+                        if (jqXHR.status === 0) {
+                            text += `\nОшибка: Not connect. Verify Network`
+                            errMsg+= 'error>> Not connect. Verify Network';
+                        } else if (jqXHR.status == 404) {
+                            text += `\nОшибка: Requested page not found (404)`;
+                            errMsg+= 'error>> Requested page not found (404)';
+                        } else if (jqXHR.status == 500) {
+                            text += `\nОшибка: Internal Server Error (500)`;
+                            errMsg+= 'error>> Internal Server Error (500)';
+                        } else if (exception === 'parsererror') {
+                            text += `\nОшибка: Requested JSON parse failed`;
+                            errMsg+= 'error>> Requested JSON parse failed';
+                        } else if (exception === 'timeout') {
+                            text += `\nОшибка: Time out error`;
+                            errMsg+= 'error>> Time out error';
+                        } else if (exception === 'abort') {
+                            text += `\nОшибка: Ajax request aborted`;
+                            errMsg+= 'error>> Ajax request aborted';
+                        } else {
+                            text += `\nОшибка: Uncaught Error\n${jqXHR.responseText}`;
+                            errMsg+= 'error>> Uncaught Error' + jqXHR.responseText;
+                        }
+
+                        text += `\nПожалуйста, перезагрузите страницу. Если ошибка повториться, напишите нам в чат`;
+                        alert(text);
+                        throw errMsg;
+        }
+
+        function downloadImage(ext) {
+            try {
+                if (ext === 'jpeg') {
+                    canvas.backgroundColor = '#ffffff';
+                    canvas.requestRenderAll();
+                }
+
+                $.ajax({
+                    url: 'https://stage.infograffer.ru/editor/export/templates/1/sign.png',
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function (data) {
+                        let url = URL.createObjectURL(data);
+                        fabric.Image.fromURL(url, function (img) {
+                            img.set({
+                                left: 0,
+                                top: 0,
+                            });
+                            canvas.add(img);
+
+                            try {
+                                const base64 = canvas.toDataURL({
+                                    format: 'jpeg',
+                                    enableRetinaScaling: true,
+                                    multiplier: 0.5,
+                                });
+                                
+                                let currentDate = new Date();
+                                let time = (currentDate.getMonth() + 1) + '-' + currentDate.getDate() + '-' + currentDate.getHours() +
+                                '-' + currentDate.getMinutes() + '-' + currentDate.getSeconds();
+
+                                const link = document.createElement("a");
+                                link.href = base64;
+                                link.download = `infograffer-${time}.${ext}`;
+                                link.click();
+                            } catch (error) {
+                                canvas.remove(img);
+                                canvas.renderAll();
+                            }
+
+
+
+                            canvas.remove(img);
+                            canvas.renderAll();
+
+                        });
+                    },
+                    error: function (jqXHR, exception) {
+                        findProblem(jqXHR, exception)
+                    }
+                });
+
+
+            } catch (error) {
+                console.error('error >>> ', error);
+            }
+        }
+
+        function closeAll(selector, classValue) {
+            document.querySelectorAll(selector).forEach(item => {
+                item.classList.remove(classValue);
+            });
+        }
+
+        function openOptions(value) {
+            closeAll('.redactor .tool.active', 'active');
+            $(`.redactor .tool.${value}`).addClass('active');
+        }
+
+        $('.tool-btns button').on('click', function () {
+            if ($(this).hasClass('active') || $(this).hasClass('save') || $(this).hasClass('return')) {
+                return;
+            };
+
+            closeAll('.tool-btns button.active', 'active');
+
+            $(this).addClass('active');
+            openOptions($(this).attr('id'));
+        });
+
+        $('.tool-btns button.return').on('click',function(){
+            openPage('.inner-page', innerPage -= 1);
+        });
+
+        function addText() {
+            if (selectedGroup?.length) {
+                groupUpElements();
+            }
+
+            let text = new fabric.IText("Текст", {
+                left: 100,
+                top: 100,
+                padding: 10,
+                text: $('#newTextContent').val()?$('#newTextContent').val(): 'текст',
+                textBackgroundColor: 'transparent',
+                fontSize: $('#textFontSize').val(),
+                fontFamily: $('#textFontFamily').val()?$('#textFontFamily').val(): 'PT Sans',
+                fill: $('#textColor').val(),
+                objectCaching: false,
+
+                fontWeight: $('#textBold').is(':checked') ? 'bold' : '',
+                linethrough: $('#textLineThrough').is(':checked') ? true : false,
+                underline: $('#textUnderline').is(':checked') ? true : false,
+                fontStyle: $('#textItalic').is(':checked') ? 'italic' : '',
+            });
+
+            canvas.add(text);
+            canvas.setActiveObject(text);
+            canvas.renderAll();
+            activeTarget = text;
+            textTarget = text;
+            updateTextOptions(text);
+
+            $('#textContent').show();
+            $('#newTextContent').val('');
+        }
+
+        function removeInnerStyle(obj, attr) {
+            if (!attr || !obj || !obj.styles[0] || !Object.keys(obj.styles[0]).length) {
+                return;
+            }
+
+            const clear = function (_this, key) {
+                if (!Object.keys(_this).length) {
+                    delete obj.styles[0][key];
+                }
+            }
+
+            $.each(obj.styles[0], function (key) {
+                if ($(this)[0][attr] || $(this)[0][attr] === '') {
+                    delete $(this)[0][attr];
+                    clear($(this)[0], key);
+                }
+            });
+        }
+
+        function findInnerElems(obj, cb){
+            if (obj?._objects && (obj?.type === 'group' || obj?.type === 'activeSelection')) {
+                obj._objects.forEach(el => {
+                    return findInnerElems(el, cb);
+                });
+            } else {
+                cb(obj);
+            }
+        }
+
+        function changeText(attribute, value) {
+            const start = (object) => {
+                if (object ?.type === 'textbox' ||
+                    object ?.type === 'i-text' ||
+                    object ?.type === 'text') {
+                    if (object ?.setSelectionStyles && object ?.isEditing) {
+                        let style = {};
+                        style[attribute] = value;
+                        object.setSelectionStyles(style);
+                        object.setCoords();
+                    } else {
+                        removeInnerStyle(object, attribute);
+                        object.set(attribute, value);
+                    }
+                    canvas.renderAll();
+                }
+            };
+
+            let obj = canvas.getActiveObject();
+            if (obj) {
+                findInnerElems(obj, start);
+                if (obj.type === 'group') {
+                    obj.addWithUpdate();
+                }
+            }
+        }
+
+        //для предварительной прогрузки шрифтов
+        function preLoadFonts() {
+            fontsMas.forEach((font) => {
+                canvas.add(new fabric.Textbox("тест", {
+                    fill: '#000',
+                    fontFamily: font,
+                }));
+                canvas.requestRenderAll();
+            });
+
+            canvas.forEachObject(function (object) {
+                if (object.ownType !== 'mainFoto') {
+                    canvas.remove(object);
+                }
+            });
+            canvas.setBackgroundColor('');
+            canvas.requestRenderAll();
+            
+            fabric.Object.prototype.hasControls = false;
+        }
+
+        $('.tool.icons .accordion .card-header').on('click', function(){
+            let _this = $(this);
+            $('.tool.icons .accordion .card-content').each(function(){
+                if ($(this)[0] !== _this.next()[0]){
+                    $(this).slideUp();
+                }
+            });
+
+            $(this).next().slideToggle();
+        });
+
+        $('.icon-category select').on('change', function () {
+            let id_category = $(this).val();
+            if (id_category <= 0) {
+                return;
+            }
+
+            $.ajax('https://stage.infograffer.ru/icon/packs/?id_category=' + id_category, {
+                dataType: 'json',
+                beforeSend: function () {
+
+                },
+                success: function (packs) {
+                    $('#iconPackList .list').html(packs);
+                    $('.accordion .iconPackList-header').click();
+                    $('#iconPackList > div > p > i').append($('#iconPackList > div > select'));
+                },
+                error: function (jqXHR, exception) {
+                    findProblem(jqXHR, exception)
+                }
+            });
+        });
+
+        $('#iconPackList').on('click', '[data-id_pack]', function () {
+            let id_pack = $(this).data('id_pack');
+
+            if (id_pack > 0) {
+                $.ajax('https://stage.infograffer.ru/icon/icons/?id_pack=' + id_pack, {
+                    dataType: 'json',
+                    beforeSend: function () {
+
+                    },
+                    success: function (icons) {
+                        $('#iconList .list').html(icons);
+                        $('.accordion .iconList-header').click();
+                        $('#iconList .list p, #iconList .list select').hide();
+                    },
+                    error: function (jqXHR, exception) {
+                        findProblem(jqXHR, exception)
+                    }
+                });
+            }
+        });
+
+        $('#iconPackList').on('click', 'a[href="#"]', function(e){
+            e.preventDefault();
+        });
+
+
+        $('#iconPackList').on('change', '[name="packs_page"]', function () {
+            let id_category = $(this).data('id_category');
+            let page = $(this).val();
+            console.log('page: ', page);
+
+            $.ajax('https://stage.infograffer.ru/icon/packs/?id_category=' + id_category + '&page=' + page, {
+                dataType: 'json',
+                beforeSend: function () {
+
+                },
+                success: function (packs) {
+                    $('#iconPackList .list').html(packs);
+                    $('#iconPackList > div > p > i').append($('#iconPackList > div > select'));
+                },
+                error: function (jqXHR, exception) {
+                    findProblem(jqXHR, exception)
+                }
+            })
+        })
+
+        $('#iconList').on('click', '.add-icon', function () {
+            let url = $(this).attr('src');
+            fabric.Image.fromURL(url, function (img) {
+                img.set({
+                    left: 10,
+                    top: 10,
+                    ownType: 'icon',
+                });
+                img.scale(0.3);
+                canvas.add(img);
+            }, {
+            crossOrigin: 'anonymous',
+            });
+        });
+
+        $('.templates').on('click', 'img', function () {
+            let id_template = $(this).data('template-id');
+
+            if (id_template>0) {
+                templates[id_template].backgroundImage = mainFoto;
+                templates[id_template].backgroundColor = '#fff';
+                canvas.loadFromJSON(templates[id_template]);
+                canvas.renderAll();
+            }
+        });
+
+
+        let doubleClicked = {
+            flag: false,
+            target: null,
+        };
+        let selectedGroup = [];
+        let masForGroupUp = [];
+        let is_edit_group = false;
+        let activeTarget = null;
+        let textTarget = null;
+        
         function updateTextOptions(obj){
                 $('#textContent').val(obj.text);
                 $('#textFontFamily').val(obj.fontFamily);
@@ -826,286 +838,286 @@
                 $('#textUnderline').prop('checked',obj.underline?true:false);
                 $('#textLineThrough').prop('checked',obj.linethrough?true:false);
         }
-   
-           canvas.on("mouse:up",function(e){
-               $('#textContent').val('');
-               $('#objectWidth').val('');
-               $('#objectHeight').val('');
-   
-               // if (doubleClicked.flag) {
-               //     if (doubleClicked.target === e.target) {
-               //         separateGroup();
-               //     }
-               //     return;
-               // }
-   
-               // doubleClicked.flag = true;
-               // doubleClicked.target = e.target;
-               // setTimeout(() => {
-               //     doubleClicked.flag = false;
-               //     doubleClicked.target = null;
-               // }, 300);
-   
-               if (selectedGroup?.length) {
-                   let flag = false;
-   
-                   selectedGroup.forEach(el => {
-                       if (e.target === el && e.target) {
-                           flag = true;
-                       }
-                   });
-   
-                   if (!flag) {
-                       groupUpElements();
-                   }
-               }
-   
-               let object = activeTarget = canvas.getActiveObject();
-               textTarget = null;
-               
-               if (object) {
-                   $('#objectWidth').val((object.width*object.scaleX).toFixed());
-                   $('#objectHeight').val((object.height*object.scaleY).toFixed());
-   
-                   function text(object){
-                       if (object ?.type === 'textbox' ||
-                           object ?.type === 'i-text' ||
-                           object ?.type === 'text') {
-                               if (!object.__eventListeners.changed) {
-                                   object.on(
-                                       'changed',
-                                       function () {
-                                           $('#textContent').val(object.text);
-                                       },
-                                   );
-                               }
-                               textTarget = object;
-                               updateTextOptions(object);
-                       }
-                   }
-   
-                   if (object.type === 'group') {
-                       findInnerElems(object, text);
-                   }else{
-                       text(object);
-                   }
-               }
-           });
-   
-           $('#textContent').on('input',function(e){
-               if (activeTarget === canvas.getActiveObject() && activeTarget.type !== 'activeSelection') {
-                   if (activeTarget.type === 'group') {
-                       activeTarget.addWithUpdate();
-                   }
-                   textTarget.text = e.target.value;
-                   canvas.renderAll();
-               }
-           });
-   
-           function separateGroup(){
-               try {
-               if (
-                   !canvas.getActiveObject() || 
-                   canvas.getActiveObject().type !== 'group' ||
-                   canvas.getActiveObject().bind
-                   ) 
-                   {
-                       return;
-                   }
-   
-               if (selectedGroup?.length) {
-                   let flag = false;
-   
-                   selectedGroup.forEach(el => {
-                       if (canvas.getActiveObject() === el) {
-                           flag = true;
-                       }
-                   });
-   
-                   if (!flag) {
-                       let obj = canvas.getActiveObject();
-                       groupUpElements();
-                       canvas.setActiveObject(obj);
-                   } else {
-                       is_edit_group = false;
-                   }
-               }
-   
-               if (!is_edit_group) {
-                   is_edit_group = true;
-                   let obj = canvas.getActiveObject();
-                   selectedGroup = [];
-                   
-                   obj.forEachObject(function (object) {
-                       selectedGroup.push(object);
-                   });
-   
-                   masForGroupUp.push(selectedGroup);
-   
-                   obj.toActiveSelection();
-                   canvas.discardActiveObject();
-                   canvas.requestRenderAll();
-               }
-           } catch (error) {
-               console.warn('Ошибка при разделении группы');
-               console.warn('error: ', error);
-               is_edit_group = false;
-           }
-           }
-   
-           function groupUpElements(options) {
-               try {
-   
-               if (masForGroupUp?.length > 0) {
-                   is_edit_group = false;
-                   let sel;
-   
-                   for (let i = masForGroupUp.length - 1; i >= 0; i--) {
-                       let group = masForGroupUp[i];
-   
-                       group.forEach((el, ind) => {
-                           if (el?.type === 'group' && el?._objects?.length === 0) {
-                               let obj = canvas.getActiveObject();
-                               group[ind] = obj;
-                           }
-                       });
-   
-                       if (group?.length > 1) {
-                           sel = new fabric.ActiveSelection(group, {
-                               canvas: canvas,
-                           });
-   
-                           canvas.setActiveObject(sel).getActiveObject().toGroup();
-                           canvas.requestRenderAll();
-                       } else if (group?.length === 1) {
-                           canvas.setActiveObject(group[0]);
-                       }
-                   }
-                   masForGroupUp = [];
-               }
-               } catch (error) {
-                   console.warn('Ошибка соединения группы');
-                   console.warn('error: ', error);
-               }
-           };
-   
-           function Remove() {
-               let activeObjects = canvas.getActiveObjects();
-   
-               if (activeObjects?.length) {
-                   activeObjects.forEach(function (object) {
-                       masForGroupUp.forEach((group, indMas) => {
-                           group.forEach((innerEl, ind) => {
-                               if (innerEl === object) {
-                                   let newGroup;
-                                   group[ind] = null;
-   
-                                   newGroup = group.filter(el => el !== null);
-   
-                                   masForGroupUp[indMas] = newGroup;
-                               }
-                           });
-                       });
-   
-                       canvas.remove(object);
-                   });
-   
-                   canvas.discardActiveObject();
-               }
-           }
-   
-           document.onkeydown = function (event) {
-               if (event.key === "Delete") {
-                   if (canvas.getActiveObject() && !canvas.getActiveObject().isEditing) {
-                       Remove();
-                   }
-               }
-           };
-   
-           $('#objectWidth, #objectHeight').on('input',function(){
-               let obj = canvas.getActiveObject();
-               if ($(this).val()<0) {
-                   $(this).val(0);
-               }
-   
-               if (obj) {
-                   switch ($(this).attr('id')) {
-                       case 'objectWidth':
-                           obj.set({
-                               scaleX: $(this).val()/obj.width,
-                           });
-                           break;
-                           case 'objectHeight':
-                           obj.set({
-                               scaleY: $(this).val()/obj.height,
-                           });
-                           break;
-                       default:
-                           break;
-                   }
-                   obj.setCoords();
-                   canvas.renderAll();
-               }
-           });
-           $('.btns-number').on('click','button',function(){
-               let attr = $(this).attr('name');
-               let value = null;
-               switch (attr) {
-                   case 'plus-w':
-                       value=+$('#objectWidth').val() + 1;
-                       $('#objectWidth').val(value);
-                       $('#objectWidth').triggerHandler('input');
-                       break;
-                   case 'plus-h':
-                       value=+$('#objectHeight').val() + 1;
-                       $('#objectHeight').val(value);
-                       $('#objectHeight').triggerHandler('input');
-                       break;
-                   case 'minus-w':
-                       value=+$('#objectWidth').val() - 1;
-                       $('#objectWidth').val(value);
-                       $('#objectWidth').triggerHandler('input');
-                       break;
-                   case 'minus-h':
-                       value=+$('#objectHeight').val() - 1;
-                       $('#objectHeight').val(value);
-                       $('#objectHeight').triggerHandler('input');
-                       break;
-                   case 'minus-fz':
-                       value=+$('#textFontSize').val() - 1;
-                       $('#textFontSize').val(value);
-                       $('#textFontSize').triggerHandler('input');
-                       break;
-                   case 'plus-fz':
-                       value=+$('#textFontSize').val() + 1;
-                       $('#textFontSize').val(value);
-                       $('#textFontSize').triggerHandler('input');
-                       break;
-               
-                   default:
-                       break;
-               }
-           });
-   
-           var observerForm1 = new MutationObserver(function(mutations) {
-                   mutations.forEach(function(mutationRecord) {
-                       if (mutationRecord.target.style.display === 'none') {
-                           $('#rec387249820').hide();
-                           return;
-                       }
-                       $('#rec387249789').hide();
-                       $('#rec387249820').show();
-                   }); 
-           });
-           var triggerForm1 = document.querySelector('#rec387249789 #form387249789 .js-successbox');
-           if (triggerForm1) {
-               observerForm1.observe(triggerForm1, { attributes : true, attributeFilter : ['style'] });
-           }
-   
-           function returnToWbForm(){
-                $('#rec387249820').show();
-                $('#rec387249894').hide();
+
+        canvas.on("mouse:up",function(e){
+            $('#textContent').val('');
+            $('#objectWidth').val('');
+            $('#objectHeight').val('');
+
+            // if (doubleClicked.flag) {
+            //     if (doubleClicked.target === e.target) {
+            //         separateGroup();
+            //     }
+            //     return;
+            // }
+
+            // doubleClicked.flag = true;
+            // doubleClicked.target = e.target;
+            // setTimeout(() => {
+            //     doubleClicked.flag = false;
+            //     doubleClicked.target = null;
+            // }, 300);
+
+            if (selectedGroup?.length) {
+                let flag = false;
+
+                selectedGroup.forEach(el => {
+                    if (e.target === el && e.target) {
+                        flag = true;
+                    }
+                });
+
+                if (!flag) {
+                    groupUpElements();
+                }
             }
+
+            let object = activeTarget = canvas.getActiveObject();
+            textTarget = null;
+            
+            if (object) {
+                $('#objectWidth').val((object.width*object.scaleX).toFixed());
+                $('#objectHeight').val((object.height*object.scaleY).toFixed());
+
+                function text(object){
+                    if (object ?.type === 'textbox' ||
+                        object ?.type === 'i-text' ||
+                        object ?.type === 'text') {
+                            if (!object.__eventListeners.changed) {
+                                object.on(
+                                    'changed',
+                                    function () {
+                                        $('#textContent').val(object.text);
+                                    },
+                                );
+                            }
+                            textTarget = object;
+                            updateTextOptions(object);
+                    }
+                }
+
+                if (object.type === 'group') {
+                    findInnerElems(object, text);
+                }else{
+                    text(object);
+                }
+            }
+        });
+
+        $('#textContent').on('input',function(e){
+            if (activeTarget === canvas.getActiveObject() && activeTarget.type !== 'activeSelection') {
+                if (activeTarget.type === 'group') {
+                    activeTarget.addWithUpdate();
+                }
+                textTarget.text = e.target.value;
+                canvas.renderAll();
+            }
+        });
+
+        function separateGroup(){
+            try {
+            if (
+                !canvas.getActiveObject() || 
+                canvas.getActiveObject().type !== 'group' ||
+                canvas.getActiveObject().bind
+                ) 
+                {
+                    return;
+                }
+
+            if (selectedGroup?.length) {
+                let flag = false;
+
+                selectedGroup.forEach(el => {
+                    if (canvas.getActiveObject() === el) {
+                        flag = true;
+                    }
+                });
+
+                if (!flag) {
+                    let obj = canvas.getActiveObject();
+                    groupUpElements();
+                    canvas.setActiveObject(obj);
+                } else {
+                    is_edit_group = false;
+                }
+            }
+
+            if (!is_edit_group) {
+                is_edit_group = true;
+                let obj = canvas.getActiveObject();
+                selectedGroup = [];
+                
+                obj.forEachObject(function (object) {
+                    selectedGroup.push(object);
+                });
+
+                masForGroupUp.push(selectedGroup);
+
+                obj.toActiveSelection();
+                canvas.discardActiveObject();
+                canvas.requestRenderAll();
+            }
+        } catch (error) {
+            console.warn('Ошибка при разделении группы');
+            console.warn('error: ', error);
+            is_edit_group = false;
+        }
+        }
+
+        function groupUpElements(options) {
+            try {
+
+            if (masForGroupUp?.length > 0) {
+                is_edit_group = false;
+                let sel;
+
+                for (let i = masForGroupUp.length - 1; i >= 0; i--) {
+                    let group = masForGroupUp[i];
+
+                    group.forEach((el, ind) => {
+                        if (el?.type === 'group' && el?._objects?.length === 0) {
+                            let obj = canvas.getActiveObject();
+                            group[ind] = obj;
+                        }
+                    });
+
+                    if (group?.length > 1) {
+                        sel = new fabric.ActiveSelection(group, {
+                            canvas: canvas,
+                        });
+
+                        canvas.setActiveObject(sel).getActiveObject().toGroup();
+                        canvas.requestRenderAll();
+                    } else if (group?.length === 1) {
+                        canvas.setActiveObject(group[0]);
+                    }
+                }
+                masForGroupUp = [];
+            }
+            } catch (error) {
+                console.warn('Ошибка соединения группы');
+                console.warn('error: ', error);
+            }
+        };
+
+        function Remove() {
+            let activeObjects = canvas.getActiveObjects();
+
+            if (activeObjects?.length) {
+                activeObjects.forEach(function (object) {
+                    masForGroupUp.forEach((group, indMas) => {
+                        group.forEach((innerEl, ind) => {
+                            if (innerEl === object) {
+                                let newGroup;
+                                group[ind] = null;
+
+                                newGroup = group.filter(el => el !== null);
+
+                                masForGroupUp[indMas] = newGroup;
+                            }
+                        });
+                    });
+
+                    canvas.remove(object);
+                });
+
+                canvas.discardActiveObject();
+            }
+        }
+
+        document.onkeydown = function (event) {
+            if (event.key === "Delete") {
+                if (canvas.getActiveObject() && !canvas.getActiveObject().isEditing) {
+                    Remove();
+                }
+            }
+        };
+
+        $('#objectWidth, #objectHeight').on('input',function(){
+            let obj = canvas.getActiveObject();
+            if ($(this).val()<0) {
+                $(this).val(0);
+            }
+
+            if (obj) {
+                switch ($(this).attr('id')) {
+                    case 'objectWidth':
+                        obj.set({
+                            scaleX: $(this).val()/obj.width,
+                        });
+                        break;
+                        case 'objectHeight':
+                        obj.set({
+                            scaleY: $(this).val()/obj.height,
+                        });
+                        break;
+                    default:
+                        break;
+                }
+                obj.setCoords();
+                canvas.renderAll();
+            }
+        });
+        $('.btns-number').on('click','button',function(){
+            let attr = $(this).attr('name');
+            let value = null;
+            switch (attr) {
+                case 'plus-w':
+                    value=+$('#objectWidth').val() + 1;
+                    $('#objectWidth').val(value);
+                    $('#objectWidth').triggerHandler('input');
+                    break;
+                case 'plus-h':
+                    value=+$('#objectHeight').val() + 1;
+                    $('#objectHeight').val(value);
+                    $('#objectHeight').triggerHandler('input');
+                    break;
+                case 'minus-w':
+                    value=+$('#objectWidth').val() - 1;
+                    $('#objectWidth').val(value);
+                    $('#objectWidth').triggerHandler('input');
+                    break;
+                case 'minus-h':
+                    value=+$('#objectHeight').val() - 1;
+                    $('#objectHeight').val(value);
+                    $('#objectHeight').triggerHandler('input');
+                    break;
+                case 'minus-fz':
+                    value=+$('#textFontSize').val() - 1;
+                    $('#textFontSize').val(value);
+                    $('#textFontSize').triggerHandler('input');
+                    break;
+                case 'plus-fz':
+                    value=+$('#textFontSize').val() + 1;
+                    $('#textFontSize').val(value);
+                    $('#textFontSize').triggerHandler('input');
+                    break;
+            
+                default:
+                    break;
+            }
+        });
+
+        var observerForm1 = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutationRecord) {
+                    if (mutationRecord.target.style.display === 'none') {
+                        $('#rec387249820').hide();
+                        return;
+                    }
+                    $('#rec387249789').hide();
+                    $('#rec387249820').show();
+                }); 
+        });
+        var triggerForm1 = document.querySelector('#rec387249789 #form387249789 .js-successbox');
+        if (triggerForm1) {
+            observerForm1.observe(triggerForm1, { attributes : true, attributeFilter : ['style'] });
+        }
+
+        function returnToWbForm(){
+            $('#rec387249820').show();
+            $('#rec387249894').hide();
+        }
 
         document.querySelector('#form387249820 button').addEventListener('click',function(e){
             let value = $('#form387249820 > div.t-container > div.t-col.t-col_8.t-prefix_2 > div.t186__wrapper > div.t186__blockinput > input').val();
@@ -1117,5 +1129,4 @@
 
         $('#form387249820 > div.t-container > div.t-col.t-col_8.t-prefix_2 > div.t186__wrapper').after($('.page-2 .mistake'));
         $('#form387249820 .mistake').hide();
-       </script>
-      
+</script>
