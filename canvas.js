@@ -23,6 +23,9 @@ fabric = (function (f) {
 
 const canvas = this.__canvas = new fabric.Canvas('c');
 let ctx = canvas.getContext('2d');
+canvas.set({
+    preserveObjectStacking: true,
+});
 
 window.addEventListener('resize', resizeCanvas);
 
@@ -83,8 +86,11 @@ function loadPhotoFromWb(id_project) {
                             // if (num_photo == total_photos) {
                             //     document.location.href = '/project/editor/?id=' + id_project;
                             // }
+                        },
+                        error: function (jqXHR, exception) {
+                            findProblem(jqXHR, exception);
                         }
-                    })
+                    });
                 }
             } else {
                 ajax_modal.find('.modal-content').html(json.error);
@@ -105,3 +111,25 @@ function setScale(value) {
         document.documentElement.style.cssText = "min(calc(80vw - 2rem), 900px)";
     }
 }
+
+canvas.on('mouse:up', function (opt) {
+    let obj = opt.target;
+
+    if (obj) {
+        function text(obj){
+            if (obj.type == 'textbox' || obj.type == 'i-text' || obj.type == 'text') {
+                $('#textContent').show();
+                $('button#text').click();
+            }
+        }
+
+        if (obj.type==='group') {
+            findInnerElems(obj, text);
+        }else{
+            text(obj);
+        }
+    }else{
+        $('#textContent').hide();
+        $('#newTextContent').val('');
+    }
+});
