@@ -251,7 +251,9 @@
         align-items: center;
         margin: 0 auto;
         margin-bottom: 1rem;
-
+        .title{
+            margin-bottom: .5rem;
+        }
         p:not(.title) {
             display: none;
         }
@@ -335,7 +337,7 @@
         }
 
         .card-header {
-            background-color: grey;
+            background-color: var(--bgc-blue);
             cursor: pointer;
             padding: .5rem;
         }
@@ -365,6 +367,9 @@
                     display: flex;
                     flex-wrap: wrap;
                     gap: .5rem;
+                }
+                &>p{
+                    margin: 1rem 0;
                 }
             }
 
@@ -436,6 +441,9 @@
                     font-size: 1.2rem;
                     width: 95%;
                 }
+                #newTextContent{
+                    width: 95%;
+                }
 
                 #textContent {
                     display: none;
@@ -444,6 +452,10 @@
                 .text-content {
                     width: 100%;
                     text-align: center;
+                    p{
+                        text-align: left;
+                        margin: 1rem 0 .5rem 0;
+                    }
                 }
 
                 .text__options>div {
@@ -473,8 +485,9 @@
                     width: 100%;
                     display: flex;
                     flex-direction: column;
-                    align-items: center;
+                    align-items: flex-start;
                     gap: .5rem;
+                    margin-top: 1rem;
                 }
             }
 
@@ -630,6 +643,7 @@
 
         .desktop-content {
             flex-direction: row;
+            gap: 2rem;
 
             .tool {
                 position: sticky;
@@ -698,20 +712,6 @@
 
         .--canvas {
             margin: 0;
-        }
-
-        .redactor {
-            .tool {
-                &.text {
-                    textarea {
-                        resize: vertical;
-                        min-height: 3rem;
-                        max-height: 13rem;
-                        font-size: 1.2rem;
-                        width: 95%;
-                    }
-                }
-            }
         }
     }
 }
