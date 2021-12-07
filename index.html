@@ -519,6 +519,10 @@
         });
 
         function addText() {
+            if (!$('#newTextContent').val()) {
+                return;
+            }
+
             if (selectedGroup?.length) {
                 groupUpElements();
             }
@@ -527,7 +531,7 @@
                 left: 100,
                 top: 100,
                 padding: 10,
-                text: $('#newTextContent').val()?$('#newTextContent').val(): 'текст',
+                text: $('#newTextContent').val(),
                 textBackgroundColor: 'transparent',
                 fontSize: $('#textFontSize').val(),
                 fontFamily: $('#textFontFamily').val()?$('#textFontFamily').val(): 'PT Sans',
@@ -538,6 +542,11 @@
                 linethrough: $('#textLineThrough').is(':checked') ? true : false,
                 underline: $('#textUnderline').is(':checked') ? true : false,
                 fontStyle: $('#textItalic').is(':checked') ? 'italic' : '',
+            });
+
+            text.set({
+                left: canvas.width/2 - text.width/2,
+                top: canvas.height/2 - text.height/2,
             });
 
             canvas.add(text);

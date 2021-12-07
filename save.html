@@ -625,6 +625,10 @@
         });
 
         function addText() {
+            if (!$('#newTextContent').val()) {
+                return;
+            }
+            
             if (selectedGroup?.length) {
                 groupUpElements();
             }
@@ -644,6 +648,11 @@
                 linethrough: $('#textLineThrough').is(':checked') ? true : false,
                 underline: $('#textUnderline').is(':checked') ? true : false,
                 fontStyle: $('#textItalic').is(':checked') ? 'italic' : '',
+            });
+
+            text.set({
+                left: canvas.width/2 - text.width/2,
+                top: canvas.height/2 - text.height/2,
             });
 
             canvas.add(text);
