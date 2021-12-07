@@ -791,6 +791,12 @@
             
             if (object) {
                 setObjCoords(object.left, object.top);
+                object.on('scaling',function(){
+                    setObjCoords(object.left, object.top);
+                });
+                object.on('moving',function(){
+                    setObjCoords(object.left, object.top);
+                });
 
                 $('#objectWidth').val((object.width*object.scaleX).toFixed());
                 $('#objectHeight').val((object.height*object.scaleY).toFixed());

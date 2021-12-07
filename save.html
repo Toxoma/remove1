@@ -327,6 +327,12 @@
 
         if (obj) {
             setObjCoords(obj.left, obj.top);
+            obj.on('scaling',function(){
+                setObjCoords(obj.left, obj.top);
+            });
+            obj.on('moving',function(){
+                setObjCoords(obj.left, obj.top);
+            });
 
             function text(obj) {
                 if (obj.type == 'textbox' || obj.type == 'i-text' || obj.type == 'text') {
