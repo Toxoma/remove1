@@ -10,6 +10,13 @@
 </head>
 
 <body>
+    <style>
+        @import"https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap";@import"https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap";@import"https://fonts.googleapis.com/css2?family=Lobster&display=swap";@import"https://fonts.googleapis.com/css2?family=Pacifico&display=swap";
+        @import 'https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap';
+           
+           /*kv - new */
+           @import "https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500;1,700&display=swap";
+    </style>
     <div class="continer" id="our-demo">
         <section class="page page-2 active">
             <h1 class="change-elem">Введите артикул товара на Wildberries</h1>
@@ -72,8 +79,8 @@
                                     <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
                                 </svg>
                             </button>
-                            <button id="move" title="Перемещение" class="btn tool-btns__item" type="button" >
-                                <p>перемещение</p>
+                            <button id="move" title="Положение" class="btn tool-btns__item" type="button" >
+                                <p>положение</p>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-arrows-move" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd"
@@ -224,6 +231,16 @@
                                 <div class="btns-number">
                                     <button name="minus-h" class="btn"></button>
                                     <button name="plus-h" class="btn"></button>
+                                </div>
+                            </div>
+                            <div class="coords">
+                                <div class="">
+                                    <p class="mt-2">Координаты X</p>
+                                    <input id="coordX" type="number" value="0">
+                                </div>
+                                <div class="">
+                                    <p class="mt-2">Координаты Y</p>
+                                    <input id="coordY" type="number" value="0">
                                 </div>
                             </div>
                     </div>
@@ -436,8 +453,9 @@
                                 const base64 = canvas.toDataURL({
                                     format: 'jpeg',
                                     enableRetinaScaling: true,
-                                    multiplier: 0.5,
+                                    multiplier: 0.2,
                                 });
+                                console.log('base64: ', base64);
                                 
                                 let currentDate = new Date();
                                 let time = (currentDate.getMonth() + 1) + '-' + currentDate.getDate() + '-' + currentDate.getHours() +
@@ -1013,10 +1031,10 @@
             $('#our-demo').addClass('d-none');
         }
 
-        document.querySelector('#form387249820 button').addEventListener('click',function(e){
-            let value = $('#form387249820 > div.t-container > div.t-col.t-col_8.t-prefix_2 > div.t186__wrapper > div.t186__blockinput > input').val();
-            loadWBPhoto(value);
-        });
+        // document.querySelector('#form387249820 button').addEventListener('click',function(e){
+        //     let value = $('#form387249820 > div.t-container > div.t-col.t-col_8.t-prefix_2 > div.t186__wrapper > div.t186__blockinput > input').val();
+        //     loadWBPhoto(value);
+        // });
 
         $('#form387249820 .t-container').append($('.page-2 .mistake'));
 

@@ -1,3 +1,4 @@
+
 :root {
     --width: clamp(275px, calc(76vw - 2rem), 600px);
     --fz: clamp(18px, 2em, 26px);
@@ -10,13 +11,21 @@
         display: none;
         text-align: center;
         font-size: max(2em, 14px);
-        color: hsl(0 60% 50%)
+        color: hsl(0 60% 50%);
+        .inf-link{
+            display: inline;
+            text-decoration: underline;
+            cursor: pointer;
+        }
     }
 }
 
 #our-demo {
     font-size: 1vw;
     margin: 1rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Roboto',Arial,sans-serif;
     .d-none {
         display: none !important;
     }
@@ -119,6 +128,7 @@
         }
 
         #title-1 {
+            text-align: center;
             margin: 0;
             padding: .2rem 1rem;
             font-size: 1em;
@@ -394,6 +404,24 @@
 
                 &.move {
                     display: grid;
+                    .coords{
+                        margin-top: 1rem;
+                        grid-column: span 2;
+                        display: grid;
+                        gap: 1rem;
+                        &>div{
+                            display: flex;
+                            gap: .5rem;
+                            height: 40px;
+                            p{
+                                align-self: center;
+                            }
+                            input{
+                                width: max(23%, 6ch);
+                                font-size: var(--fz);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -686,4 +714,8 @@
             }
         }
     }
+}
+
+#rec387249894{
+    margin-bottom: 2rem;
 }
