@@ -628,7 +628,7 @@
             if (!$('#newTextContent').val()) {
                 return;
             }
-            
+
             if (selectedGroup?.length) {
                 groupUpElements();
             }
@@ -831,6 +831,10 @@
                     ownType: 'icon',
                 });
                 img.scale(0.3);
+                img.set({
+                    left: canvas.width/2 - img.width*img.scaleX/2,
+                    top: canvas.height/2 - img.height*img.scaleY/2,
+                })
                 canvas.add(img);
             }, {
             crossOrigin: 'anonymous',

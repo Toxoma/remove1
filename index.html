@@ -720,11 +720,17 @@
             let url = $(this).attr('src');
             fabric.Image.fromURL(url, function (img) {
                 img.set({
-                    left: 10,
-                    top: 10,
+                    left: 100,
+                    top: 100,
                     ownType: 'icon',
                 });
+
                 img.scale(0.3);
+
+                img.set({
+                    left: canvas.width/2 - img.width*img.scaleX/2,
+                    top: canvas.height/2 - img.height*img.scaleY/2,
+                })
                 canvas.add(img);
             }, {
             crossOrigin: 'anonymous',
