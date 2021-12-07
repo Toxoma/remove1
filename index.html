@@ -236,11 +236,11 @@
                             <div class="coords">
                                 <div class="">
                                     <p class="mt-2">Координаты X</p>
-                                    <input id="coordX" type="number" value="0">
+                                    <input id="coordX" type="number" value="0" disabled>
                                 </div>
                                 <div class="">
                                     <p class="mt-2">Координаты Y</p>
-                                    <input id="coordY" type="number" value="0">
+                                    <input id="coordY" type="number" value="0" disabled>
                                 </div>
                             </div>
                     </div>
@@ -455,11 +455,8 @@
                                     enableRetinaScaling: true,
                                     multiplier: 0.2,
                                 });
-                                console.log('base64: ', base64);
                                 
-                                let currentDate = new Date();
-                                let time = (currentDate.getMonth() + 1) + '-' + currentDate.getDate() + '-' + currentDate.getHours() +
-                                '-' + currentDate.getMinutes() + '-' + currentDate.getSeconds();
+                                let time = getTime();
 
                                 const link = document.createElement("a");
                                 link.href = base64;
@@ -486,6 +483,11 @@
             } catch (error) {
                 console.error('error >>> ', error);
             }
+        }
+
+        function getTime(){
+            let currentDate = new Date();
+            return ((currentDate.getMonth() + 1) + '-' + currentDate.getDate() + '-' + currentDate.getHours() + '-' + currentDate.getMinutes() + '-' + currentDate.getSeconds());
         }
 
         function closeAll(selector, classValue) {
@@ -788,6 +790,8 @@
             textTarget = null;
             
             if (object) {
+                setObjCoords(object.left, object.top);
+
                 $('#objectWidth').val((object.width*object.scaleX).toFixed());
                 $('#objectHeight').val((object.height*object.scaleY).toFixed());
 
@@ -938,14 +942,6 @@
             }
         }
 
-        document.onkeydown = function (event) {
-            if (event.key === "Delete") {
-                if (canvas.getActiveObject() && !canvas.getActiveObject().isEditing) {
-                    Remove();
-                }
-            }
-        };
-
         $('#objectWidth, #objectHeight').on('input',function(){
             let obj = canvas.getActiveObject();
             if ($(this).val()<0) {
@@ -1038,6 +1034,84 @@
 
         $('#form387249820 .t-container').append($('.page-2 .mistake'));
 
+        function setObjCoords(x, y){
+            $('#coordX').val(x.toFixed());
+            $('#coordY').val(y.toFixed());
+        }
+
+        document.onkeydown = function (event) {
+            if (event.ctrlKey && event.key == 'z' || event.ctrlKey && event.key == 'я') {
+                console.log('event: ', event);
+                console.log(event.keyCode);
+                // if (mods < state.length-1) {
+                //     mods++;
+                //     canvas.clear().renderAll();
+                //     canvas.loadFromJSON(state[state.length - 1 - mods]);
+                //     canvas.renderAll();
+                //     masForGroupUp = [];
+                //     is_edit_group = false;
+                // }
+            } else if (event.ctrlKey && event.key == 'y' || event.ctrlKey && event.key == 'н') {
+                console.log('event: ', event);
+                console.log(event.keyCode);
+                // if (mods > 0) {
+                //     mods--;
+                //     canvas.clear().renderAll();
+                //     canvas.loadFromJSON(state[state.length - 1 - mods]);
+                //     canvas.renderAll();
+                //     masForGroupUp = [];
+                //     is_edit_group = false;
+                // }
+            }else  if (event.key === "Delete") {
+                if (canvas.getActiveObject() && !canvas.getActiveObject().isEditing) {
+                    Remove();
+                }
+            }
+        };
+
+        $("body").bind('copy', function() {
+            Copy();
+        });
+        $("body").bind('paste', function() {
+            Paste();
+        });
+
+        let _clipboard = null;
+
+        function Copy() {
+            canvas.getActiveObject().clone(function(cloned) {
+                _clipboard = cloned;
+            });
+        }
+
+        function Paste() {
+            // clone again, so you can do multiple copies.
+            _clipboard.clone(function(clonedObj) {
+                canvas.discardActiveObject();
+                
+                clonedObj.set({
+                    left: clonedObj.left + 10,
+                    top: clonedObj.top + 10,
+                    evented: true,
+                });
+
+                if (clonedObj.type === 'activeSelection') {
+                    // active selection needs a reference to the canvas.
+                    clonedObj.canvas = canvas;
+                    clonedObj.forEachObject(function(obj) {
+                        canvas.add(obj);
+                    });
+                    // this should solve the unselectability
+                    clonedObj.setCoords();
+                } else {
+                    canvas.add(clonedObj);
+                }
+                _clipboard.top += 10;
+                _clipboard.left += 10;
+                canvas.setActiveObject(clonedObj);
+                canvas.requestRenderAll();
+            });
+        }
     </script>
 </body>
 
