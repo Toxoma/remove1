@@ -1,3 +1,4 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css');
 :root {
     --width: clamp(275px, calc(76vw - 2rem), 450px);
     --fz: clamp(18px, 2em, 26px);
@@ -134,7 +135,7 @@
         #title-1 {
             text-align: center;
             margin: 0;
-            padding: 2rem 0;
+            padding: 1rem 0 .5rem 0;
             font-size: 1em;
         }
 
@@ -298,12 +299,12 @@
             justify-content: space-around;
             gap: .5rem;
             grid-template-areas:
-                'one two three four six';
+                'one two three four five six';
             width: 100%;
 
             button {
-                width: max(50px, 14vw);
-                height: 50px;
+                width: max(44px, 14vw);
+                height: 44px;
                 padding: 0;
             }
 
@@ -324,6 +325,9 @@
             }
 
             button:nth-child(5) {
+                grid-area: five;
+            }
+            button:nth-child(6) {
                 grid-area: six;
             }
         }
@@ -525,6 +529,25 @@
                     display: flex;
                 }
             }
+            &.image{
+                overflow: hidden;
+
+                #fileUpload{
+                    cursor: pointer;
+                    border: none;
+                    &:hover{
+                        background-color: var(--bgc-blue);
+                    }
+                }
+
+                div:nth-child(1){
+                    display: grid;
+                    label{
+                        font-size: 1rem;
+                        margin-bottom: .2rem;
+                    }
+                }
+            }
         }
     }
 
@@ -603,6 +626,47 @@
         }
     }
 
+    #rec387249894 {
+        margin-bottom: 2rem;
+    }
+
+
+    #imageCropModal{
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: hsl(0, 0, 0, 0.6);
+
+        .container{
+            background-color: #fff;
+            padding: 1rem;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            border-radius: 10px;
+
+            .img-container{
+                width: 80vw;
+                height: 70vh;
+                max-width: 1000px;
+                max-height: 70vh;
+            }
+
+            .modal-footer{
+                margin-top: 1rem;
+                display: grid;
+                gap: 1rem;
+                button{
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
     @media screen and (min-width: 376px) {
         .templates {
             min-height: 118px;
@@ -648,10 +712,18 @@
                 gap: 1rem;
                 grid-template-areas:
                     'two three four'
-                    'one . six';
+                    'one five six';
                 button {
                     width: auto;
                 }
+            }
+        }
+
+        #imageCropModal{
+            .modal-footer{
+                display: flex !important;
+                justify-content: center;
+                flex-direction: row-reverse;
             }
         }
 
@@ -691,6 +763,14 @@
                 img {
                     width: clamp(100px, 9.3vw, 132px) !important;
                     height: clamp(100px, 9.3vw, 132px) !important;
+                }
+            }
+
+            .tool.image{
+                div:nth-child(1){
+                    label{
+                        font-size: 1.2rem !important;
+                    }
                 }
             }
         }
@@ -744,8 +824,5 @@
             }
         }
     }
-
-    #rec387249894 {
-        margin-bottom: 2rem;
-    }
 }
+

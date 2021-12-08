@@ -27,14 +27,7 @@ canvas.set({
     preserveObjectStacking: true,
 });
 
-window.addEventListener('resize', resizeCanvas);
-
-function resizeCanvas(){
-
-}
-
 function setImageAsBg() {
-    // canvas.add(mainFoto);
     canvas.setBackgroundImage(mainFoto, canvas.renderAll.bind(canvas));
 }
 
@@ -112,8 +105,13 @@ function setScale(value) {
     }
 }
 
+let targetImage = null;
+
 canvas.on('mouse:up', function (opt) {
     let obj = opt.target;
+    targetImage = null;
+    $('#imageBorderCircle').prop('checked', false);
+    $('#our-demo .redactor .image .image-border-circle').show();
 
     if (obj) {
         function text(obj){
@@ -123,11 +121,25 @@ canvas.on('mouse:up', function (opt) {
             }
         }
 
+        function image(obj){
+            if (obj.type == 'image') {
+                targetImage = obj;
+
+                $('button#image').click();
+                $('#imageBorderCircle').prop('checked', (obj.clipPath && obj.clipPath.type === 'circle')?true:false);
+            }
+        }
+
         if (obj.type==='group') {
+            $('#our-demo .redactor .image .image-border-circle').hide();
+
             findInnerElems(obj, text);
+            findInnerElems(obj, image);
         }else{
             text(obj);
+            image(obj);
         }
+
     }else{
         $('#textContent').hide();
         $('#newTextContent').val('');
