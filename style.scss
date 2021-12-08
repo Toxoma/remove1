@@ -1,5 +1,5 @@
 :root {
-    --width: clamp(275px, calc(76vw - 2rem), 600px);
+    --width: clamp(275px, calc(76vw - 2rem), 450px);
     --fz: clamp(18px, 2em, 26px);
     --bgc-blue: #bedfef;
     --fc-pink: hsl(299, 89%, 41%);
@@ -9,8 +9,11 @@
     .mistake {
         display: none;
         text-align: center;
-        font-size: max(2em, 14px);
-        color: hsl(0 60% 50%);
+        font-size: max(1.6em, 14px);
+        color: #98123d;
+        margin-top: 15px;
+        font-weight: 400;
+        font-family: 'Roboto', Arial, sans-serif;
 
         .inf-link {
             display: inline;
@@ -131,7 +134,7 @@
         #title-1 {
             text-align: center;
             margin: 0;
-            padding: .2rem 1rem;
+            padding: 2rem 0;
             font-size: 1em;
         }
 
