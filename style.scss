@@ -646,14 +646,14 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translateX(-50%) translateY(-50%);
+            transform: translateX(-50%) translateY(-55%);
             border-radius: 10px;
 
             .img-container{
                 width: 80vw;
                 height: 70vh;
                 max-width: 1000px;
-                max-height: 70vh;
+                max-height: 60vh;
             }
 
             .modal-footer{
