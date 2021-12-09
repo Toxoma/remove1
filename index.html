@@ -244,6 +244,10 @@
                                     <button name="plus-h" class="btn"></button>
                                 </div>
                             </div>
+                            <div class="container-checkbox">
+                                <label for="proportion">Пропорция</label>
+                                <input id="proportion" type="checkbox">
+                            </div>
                             <div class="coords">
                                 <div class="">
                                     <p class="mt-2">Координаты X</p>
@@ -262,8 +266,8 @@
                             <input type="file" id="fileUpload" class="upload" name="userfile" accept="image/jpeg, image/png, image/gif, image/svg">
                         </div>
                         <div class="image-border-circle">
-                            <label for="imageBorderCircle">Круглое изображение</label>
-                            <input type="checkbox" id="imageBorderCircle" value="-1">
+                                <label for="imageBorderCircle">Круглое изображение</label>
+                                <input type="checkbox" id="imageBorderCircle" value="-1">
                         </div>
                     </div>
                 </section>
@@ -998,26 +1002,41 @@
             }
         }
 
-        $('#objectWidth, #objectHeight').on('input',function(){
+        $('#our-demo #objectWidth,#our-demo #objectHeight').on('input',function(){
             let obj = canvas.getActiveObject();
             if ($(this).val()<0) {
                 $(this).val(0);
             }
 
             if (obj) {
-                switch ($(this).attr('id')) {
-                    case 'objectWidth':
-                        obj.set({
-                            scaleX: $(this).val()/obj.width,
-                        });
-                        break;
-                    case 'objectHeight':
-                        obj.set({
-                            scaleY: $(this).val()/obj.height,
-                        });
-                        break;
-                    default:
-                        break;
+                if ($('#our-demo #proportion').is(':checked')) {
+                    switch ($(this).attr('id')) {
+                        case 'objectWidth':
+                            obj.scaleToWidth($(this).val());
+                            $('#our-demo #objectHeight').val((obj.height*obj.scaleY).toFixed());
+                            break;
+                        case 'objectHeight':
+                            obj.scaleToHeight($(this).val());
+                            $('#our-demo #objectWidth').val((obj.width*obj.scaleX).toFixed());
+                            break;
+                        default:
+                            break;
+                    }
+                }else{
+                    switch ($(this).attr('id')) {
+                        case 'objectWidth':
+                            obj.set({
+                                scaleX: $(this).val()/obj.width,
+                            });
+                            break;
+                        case 'objectHeight':
+                            obj.set({
+                                scaleY: $(this).val()/obj.height,
+                            });
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 obj.setCoords();
                 canvas.renderAll();
@@ -1192,6 +1211,10 @@
         }).mouseleave(function() {
             clearInterval(intervalId);
             clearTimeout(timeoutId);
+        });
+
+        $('#our-demo #proportion').change(function(){
+            $('#our-demo #objectWidth').trigger('input');
         });
     </script>
 </body>
