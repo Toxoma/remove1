@@ -133,7 +133,7 @@ canvas.on('mouse:up', function (opt) {
             if (obj.type == 'image') {
                 targetImage = obj;
 
-                $('button#image').click();
+                $('button#move').click();
                 $('#imageBorderCircle').prop('checked', (obj.clipPath && obj.clipPath.type === 'circle')?true:false);
             }
         }

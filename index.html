@@ -643,6 +643,8 @@
                 findInnerElems(obj, start);
                 if (obj.type === 'group') {
                     obj.addWithUpdate();
+                    $('#objectWidth').val((obj.width*obj.scaleX).toFixed());
+                    $('#objectHeight').val((obj.height*obj.scaleY).toFixed());
                 }
             }
         }
@@ -1009,7 +1011,7 @@
                             scaleX: $(this).val()/obj.width,
                         });
                         break;
-                        case 'objectHeight':
+                    case 'objectHeight':
                         obj.set({
                             scaleY: $(this).val()/obj.height,
                         });
@@ -1019,45 +1021,6 @@
                 }
                 obj.setCoords();
                 canvas.renderAll();
-            }
-        });
-        $('.btns-number').on('click','button',function(){
-            let attr = $(this).attr('name');
-            let value = null;
-            switch (attr) {
-                case 'plus-w':
-                    value=+$('#objectWidth').val() + 1;
-                    $('#objectWidth').val(value);
-                    $('#objectWidth').triggerHandler('input');
-                    break;
-                case 'plus-h':
-                    value=+$('#objectHeight').val() + 1;
-                    $('#objectHeight').val(value);
-                    $('#objectHeight').triggerHandler('input');
-                    break;
-                case 'minus-w':
-                    value=+$('#objectWidth').val() - 1;
-                    $('#objectWidth').val(value);
-                    $('#objectWidth').triggerHandler('input');
-                    break;
-                case 'minus-h':
-                    value=+$('#objectHeight').val() - 1;
-                    $('#objectHeight').val(value);
-                    $('#objectHeight').triggerHandler('input');
-                    break;
-                case 'minus-fz':
-                    value=+$('#textFontSize').val() - 1;
-                    $('#textFontSize').val(value);
-                    $('#textFontSize').triggerHandler('input');
-                    break;
-                case 'plus-fz':
-                    value=+$('#textFontSize').val() + 1;
-                    $('#textFontSize').val(value);
-                    $('#textFontSize').triggerHandler('input');
-                    break;
-            
-                default:
-                    break;
             }
         });
 
@@ -1166,6 +1129,70 @@
                 canvas.requestRenderAll();
             });
         }
+
+        function controlsForObject(_this, value){
+            let attr = _this.attr('name');
+
+            let target=null;
+
+            switch (attr) {
+                case 'plus-w':
+                    target = $('#our-demo #objectWidth');
+                    value=+target.val() + value;
+                    break;
+                case 'plus-h':
+                    target = $('#our-demo #objectHeight');
+                    value=+target.val() + value;
+                    break;
+                case 'minus-w':
+                    target = $('#our-demo #objectWidth');
+                    value=+target.val() - value;
+                    break;
+                case 'minus-h':
+                    target = $('#our-demo #objectHeight');
+                    value=+target.val() - value;
+                    break;
+                case 'minus-fz':
+                    target = $('#our-demo #textFontSize');
+                    value=+target.val() - value;
+                    break;
+                case 'plus-fz':
+                    target = $('#our-demo #textFontSize');
+                    value=+target.val() + value;
+                    break;
+                default:
+                    break;
+            }
+
+            if (!target) {
+                return;
+            }
+
+            target.val(value);
+            target.trigger('input');
+        }
+
+        let timeoutId = null;
+        let intervalId = null;
+
+        $('#our-demo .btns-number').on('mousedown','button', function(){
+            let _this = $(this);
+            controlsForObject(_this, 1);
+
+            timeoutId = setTimeout( function () {
+                intervalId = setInterval(function(){
+                    controlsForObject(_this, 5);
+                },50);
+            }, 500);
+        });
+
+        $("#our-demo .btns-number button").mouseup(function() {
+            clearInterval(intervalId);
+            clearTimeout(timeoutId);
+        }).mouseleave(function() {
+            clearInterval(intervalId);
+            clearTimeout(timeoutId);
+        });
     </script>
 </body>
 

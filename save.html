@@ -370,7 +370,7 @@
             targetImage = null;
             $('#our-demo #imageBorderCircle').prop('checked', false);
             $('#our-demo .redactor .image .image-border-circle').show();
-            $('#our-demo > section.page.page-3.active > div.desktop-content > section.inner-page.inner-page-2.redactor.active > div.tool.image.active > div:nth-child(1) > label').text('Загрузите новое изображение');
+            $('#our-demo label[for="fileUpload"]').text('Загрузите новое изображение');
     
             if (obj) {
                 setObjCoords(obj.left, obj.top);
@@ -391,9 +391,9 @@
                     if (_obj.type == 'image') {
                         targetImage = _obj;
     
-                        $('button#image').click();
+                        $('button#move').click();
                         $('#imageBorderCircle').prop('checked', (_obj.clipPath && _obj.clipPath.type === 'circle')?true:false);
-                        $('#our-demo > section.page.page-3.active > div.desktop-content > section.inner-page.inner-page-2.redactor.active > div.tool.image.active > div:nth-child(1) > label').text('Заменить изображение');
+                        $('#our-demo label[for="fileUpload"]').text('Заменить изображение');
                     }
                 }
     
@@ -774,6 +774,8 @@
                     findInnerElems(obj, start);
                     if (obj.type === 'group') {
                         obj.addWithUpdate();
+                        $('#objectWidth').val((obj.width*obj.scaleX).toFixed());
+                        $('#objectHeight').val((obj.height*obj.scaleY).toFixed());
                     }
                 }
             }
@@ -934,20 +936,6 @@
                 $('#textContent').val('');
                 $('#objectWidth').val('');
                 $('#objectHeight').val('');
-    
-                if (selectedGroup?.length) {
-                    let flag = false;
-    
-                    selectedGroup.forEach(el => {
-                        if (e.target === el && e.target) {
-                            flag = true;
-                        }
-                    });
-    
-                    if (!flag) {
-                        groupUpElements();
-                    }
-                }
     
                 let object = activeTarget = canvas.getActiveObject();
                 textTarget = null;
@@ -1128,46 +1116,7 @@
                     canvas.renderAll();
                 }
             });
-            $('.btns-number').on('click','button',function(){
-                let attr = $(this).attr('name');
-                let value = null;
-                switch (attr) {
-                    case 'plus-w':
-                        value=+$('#objectWidth').val() + 1;
-                        $('#objectWidth').val(value);
-                        $('#objectWidth').triggerHandler('input');
-                        break;
-                    case 'plus-h':
-                        value=+$('#objectHeight').val() + 1;
-                        $('#objectHeight').val(value);
-                        $('#objectHeight').triggerHandler('input');
-                        break;
-                    case 'minus-w':
-                        value=+$('#objectWidth').val() - 1;
-                        $('#objectWidth').val(value);
-                        $('#objectWidth').triggerHandler('input');
-                        break;
-                    case 'minus-h':
-                        value=+$('#objectHeight').val() - 1;
-                        $('#objectHeight').val(value);
-                        $('#objectHeight').triggerHandler('input');
-                        break;
-                    case 'minus-fz':
-                        value=+$('#textFontSize').val() - 1;
-                        $('#textFontSize').val(value);
-                        $('#textFontSize').triggerHandler('input');
-                        break;
-                    case 'plus-fz':
-                        value=+$('#textFontSize').val() + 1;
-                        $('#textFontSize').val(value);
-                        $('#textFontSize').triggerHandler('input');
-                        break;
-                
-                    default:
-                        break;
-                }
-            });
-    
+
             var observerForm1 = new MutationObserver(function(mutations) {
                     mutations.forEach(function(mutationRecord) {
                         if (mutationRecord.target.style.display === 'none') {
@@ -1455,6 +1404,70 @@
     
         canvas.renderAll();
     }
+
+// ------------ контроллер кнопок --------------
+    function controlsForObject(_this, value){
+            let attr = _this.attr('name');
+            let target=null;
+            switch (attr) {
+                case 'plus-w':
+                    target = $('#our-demo #objectWidth');
+                    value=+target.val() + value;
+                    break;
+                case 'plus-h':
+                    target = $('#our-demo #objectHeight');
+                    value=+target.val() + value;
+                    break;
+                case 'minus-w':
+                    target = $('#our-demo #objectWidth');
+                    value=+target.val() - value;
+                    break;
+                case 'minus-h':
+                    target = $('#our-demo #objectHeight');
+                    value=+target.val() - value;
+                    break;
+                case 'minus-fz':
+                    target = $('#our-demo #textFontSize');
+                    value=+target.val() - value;
+                    break;
+                case 'plus-fz':
+                    target = $('#our-demo #textFontSize');
+                    value=+target.val() + value;
+                    break;
+                default:
+                    break;
+            }
+
+            if (!target) {
+                return;
+            }
+
+            target.val(value);
+            target.trigger('input');
+        }
+
+// ------------ возможность зажима кнопок --------------
+        let timeoutId = null;
+        let intervalId = null;
+
+        $('#our-demo .btns-number').on('mousedown','button', function(){
+            let _this = $(this);
+            controlsForObject(_this, 1);
+
+            timeoutId = setTimeout( function () {
+                intervalId = setInterval(function(){
+                    controlsForObject(_this, 5);
+                },50);
+            }, 500);
+        });
+
+        $("#our-demo .btns-number button").mouseup(function() {
+            clearInterval(intervalId);
+            clearTimeout(timeoutId);
+        }).mouseleave(function() {
+            clearInterval(intervalId);
+            clearTimeout(timeoutId);
+        });
     
     </script>
     
