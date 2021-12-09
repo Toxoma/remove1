@@ -21,6 +21,13 @@ fabric = (function (f) {
     return f;
 }(fabric));
 
+fabric.Object.prototype.borderColor = 'red';
+fabric.Object.prototype.borderScaleFactor = 2;
+fabric.Object.prototype.borderOpacityWhenMoving = 0.2;
+fabric.Object.prototype.cornerColor = 'green';
+fabric.Object.prototype.cornerSize = 30;
+fabric.Object.prototype.transparentCorners = false;
+
 const canvas = this.__canvas = new fabric.Canvas('c');
 let ctx = canvas.getContext('2d');
 canvas.set({
@@ -110,6 +117,7 @@ let targetImage = null;
 canvas.on('mouse:up', function (opt) {
     let obj = opt.target;
     targetImage = null;
+    
     $('#imageBorderCircle').prop('checked', false);
     $('#our-demo .redactor .image .image-border-circle').show();
 

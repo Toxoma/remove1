@@ -23,7 +23,6 @@ $('#mainPhotoUpload').change(function (event) {
 let cropper;
 
 $('#fileUpload').change(function (event) {
-
     let reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
     reader.onload = function () {
@@ -40,31 +39,29 @@ $('#fileUpload').change(function (event) {
                     let croppedCanvas = cropper.getCroppedCanvas();
 
                     if (targetImage) {
-                        function changeSrc(newSrc, imageObject) {
-                            let width = imageObject.width;
-                            let height = imageObject.height;
-                            let scaleX = imageObject.scaleX;
-                            let scaleY = imageObject.scaleY;
+                        let width = targetImage.width;
+                        let scaleX = targetImage.scaleX;
+                        let height = targetImage.height;
+                        let scaleY = targetImage.scaleY;
 
-                            imageObject.setSrc(newSrc, function (image) {
-                                image.set({
-                                    dirty: true,
-                                    scaleX: width * scaleX / image.width,
-                                    scaleY: height * scaleY / image.height,
-                                });
-                                image.clipPath.scaleToWidth(image.width);
-                                
-                                image.setCoords(true);
-                                canvas.renderAll();
-                                targetImage = image;
+                        targetImage.setSrc(croppedCanvas.toDataURL(), function (image) {
+                            image.set({
+                                dirty: true,
                             });
-                        }
-
-                        changeSrc(croppedCanvas.toDataURL(), targetImage);
+                            if (image.clipPath) {
+                                image.clipPath.scaleToWidth(image.width);
+                            }
+                            image.setCoords(true);
+                            image.scaleToWidth(width*scaleX);
+                            targetImage = image;
+                            canvas.renderAll();
+                        });
                     }else{
                         fabric.Image.fromURL(croppedCanvas.toDataURL(), function (img) {
-                            if (img.width > canvas.width) {
-                                img.scaleToWidth(canvas.width - 40);
+                            if (img.width > img.height) {
+                                img.scaleToWidth(canvas.width/2);
+                            }else{
+                                img.scaleToHeight(canvas.height/2);
                             }
     
                             img.set({
@@ -72,7 +69,7 @@ $('#fileUpload').change(function (event) {
                                 left: canvas.width/2 - img.width*img.scaleX/2,
                                 hasControls: true,
                             });
-    
+
                             canvas.add(img);
                             canvas.renderAll();
                             canvas.setActiveObject(img);
@@ -80,10 +77,14 @@ $('#fileUpload').change(function (event) {
                     }
                 };
         }
+
+        let ratio = 3/4;
         
         if (targetImage) {
+            ratio = targetImage.width*targetImage.scaleX / (targetImage.height*targetImage.scaleY);
+
             cropper = new Cropper(cropImg, {
-                aspectRatio: 1,
+                aspectRatio: ratio,
                 // zoomOnWheel: false, // запрет scrolla
                 viewMode: 2,
                 
@@ -96,7 +97,7 @@ $('#fileUpload').change(function (event) {
             });
         }else{
             cropper = new Cropper(cropImg, {
-                initialAspectRatio: 3/4,
+                initialAspectRatio: ratio,
                 viewMode: 2,
                 
                 ready: function () {

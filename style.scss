@@ -667,6 +667,22 @@
         }
     }
 
+    #imageCropModal{
+        .cropper-point{
+            width: 15px;
+            height: 15px;
+        }
+        .cropper-line{
+            opacity: 0.4;
+        }
+        .cropper-line.line-s, .cropper-line.line-n{
+            height: 10px;
+        }
+        .cropper-line.line-w, .cropper-line.line-e{
+            width: 10px;
+        }
+    }
+
     @media screen and (min-width: 376px) {
         .templates {
             min-height: 118px;
