@@ -641,6 +641,8 @@
                         object.set(attribute, value);
                     }
                     canvas.renderAll();
+                    $('#objectWidth').val((obj.width*obj.scaleX).toFixed());
+                    $('#objectHeight').val((obj.height*obj.scaleY).toFixed());
                 }
             };
 
@@ -649,8 +651,6 @@
                 findInnerElems(obj, start);
                 if (obj.type === 'group') {
                     obj.addWithUpdate();
-                    $('#objectWidth').val((obj.width*obj.scaleX).toFixed());
-                    $('#objectHeight').val((obj.height*obj.scaleY).toFixed());
                 }
             }
         }
@@ -1275,7 +1275,6 @@
                 return;
             }
 
-            console.log(1);
             updateModifications();
         });
 
