@@ -1233,7 +1233,7 @@
             function Copy() {
                 canvas.getActiveObject().clone(function(cloned) {
                     _clipboard = cloned;
-                });
+                },additionalProperties);
             }
     
             function Paste() {
@@ -1263,7 +1263,7 @@
                     canvas.setActiveObject(clonedObj);
                     canvas.requestRenderAll();
                     updateModifications();
-                });
+                },additionalProperties);
             }
     
             document.onkeydown = function (event) {
@@ -1536,7 +1536,8 @@
                     return;
                 }
                 
-                const json = stringifyCanvas(canvas);
+                // const json = stringifyCanvas(canvas);
+                const json = canvas.toJSON(additionalProperties);
 
                 if (mods === 0) {
                     state.push(json);
