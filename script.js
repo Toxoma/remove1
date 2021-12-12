@@ -55,6 +55,7 @@ $('#fileUpload').change(function (event) {
                             image.scaleToWidth(width*scaleX);
                             targetImage = image;
                             canvas.renderAll();
+                            updateModifications();
                         });
                     }else{
                         fabric.Image.fromURL(croppedCanvas.toDataURL(), function (img) {
@@ -73,6 +74,7 @@ $('#fileUpload').change(function (event) {
                             canvas.add(img);
                             canvas.renderAll();
                             canvas.setActiveObject(img);
+                            updateModifications();
                         });
                     }
                 };

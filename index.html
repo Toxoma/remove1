@@ -591,6 +591,8 @@
             textTarget = text;
             updateTextOptions(text);
 
+            updateModifications();
+
             $('#textContent').show();
             $('#newTextContent').val('');
         }
@@ -736,7 +738,6 @@
         $('#iconPackList').on('change', '[name="packs_page"]', function () {
             let id_category = $(this).data('id_category');
             let page = $(this).val();
-            console.log('page: ', page);
 
             $.ajax('https://stage.infograffer.ru/icon/packs/?id_category=' + id_category + '&page=' + page, {
                 dataType: 'json',
@@ -769,6 +770,7 @@
                     top: canvas.height/2 - img.height*img.scaleY/2,
                 })
                 canvas.add(img);
+                updateModifications();
             }, {
             crossOrigin: 'anonymous',
             });
@@ -780,8 +782,10 @@
             if (id_template>0) {
                 templates[id_template].backgroundImage = mainFoto;
                 templates[id_template].backgroundColor = '#fff';
-                canvas.loadFromJSON(templates[id_template]);
-                canvas.renderAll();
+                canvas.loadFromJSON(templates[id_template], function(){
+                    canvas.renderAll();
+                    updateModifications();
+                });
             }
         });
 
@@ -880,7 +884,15 @@
             }
         });
 
+        canvas.on('object:modified',function(){
+            updateModifications();
+        });
+
         $('#textContent').on('input',function(e){
+            if (!canvas.getActiveObject()) {
+                return;
+            }
+
             if (activeTarget === canvas.getActiveObject() && activeTarget.type !== 'activeSelection') {
                 if (activeTarget.type === 'group') {
                     activeTarget.addWithUpdate();
@@ -999,6 +1011,7 @@
                 });
 
                 canvas.discardActiveObject();
+                updateModifications();
             }
         }
 
@@ -1075,29 +1088,67 @@
             $('#coordY').val(y.toFixed());
         }
 
+        let mods = 0,
+            state = [];
+            
+            function stringifyCanvas(canvas)
+            {
+                try {
+                    sCanvas = JSON.stringify(canvas);
+                    oCanvas = JSON.parse(sCanvas);
+
+                    // $.each(oCanvas.objects, function(n, object) {
+                    //     $.each(additionalProperties, function(m, field) {
+                    //         oCanvas.objects[n][field] = canvas.item(n)[field];
+                    //     });
+                    // });
+                
+                    return JSON.stringify(oCanvas);
+                } catch (error) {
+                    console.error('Ошибка при конвертировании canvas');
+                    throw "Stop updateModifications";
+                }
+            }
+
+            function updateModifications() {
+                var cnt = canvas.getObjects().length;
+                if(cnt === 0){
+                    //Холст пустой, сохранять нет смысла...
+                    return;
+                }
+                
+                const json = stringifyCanvas(canvas);
+
+                if (mods === 0) {
+                    state.push(json);
+                    return;
+                }
+
+                
+                if (mods !== 0) {
+                    state.push(state[state.length - 1 - mods]);
+                    mods = 0;
+                    state.push(json);
+                }
+            }
+
         document.onkeydown = function (event) {
-            if (event.ctrlKey && event.key == 'z' || event.ctrlKey && event.key == 'я') {
-                console.log('event: ', event);
-                console.log(event.keyCode);
-                // if (mods < state.length-1) {
-                //     mods++;
-                //     canvas.clear().renderAll();
-                //     canvas.loadFromJSON(state[state.length - 1 - mods]);
-                //     canvas.renderAll();
-                //     masForGroupUp = [];
-                //     is_edit_group = false;
-                // }
-            } else if (event.ctrlKey && event.key == 'y' || event.ctrlKey && event.key == 'н') {
-                console.log('event: ', event);
-                console.log(event.keyCode);
-                // if (mods > 0) {
-                //     mods--;
-                //     canvas.clear().renderAll();
-                //     canvas.loadFromJSON(state[state.length - 1 - mods]);
-                //     canvas.renderAll();
-                //     masForGroupUp = [];
-                //     is_edit_group = false;
-                // }
+            const x = ()=>{
+                canvas.clear().renderAll();
+                canvas.loadFromJSON(state[state.length - 1 - mods]);
+                canvas.renderAll();
+            }
+
+            if (event.ctrlKey && event.keyCode == 90) {
+                if (mods < state.length-1) {
+                    mods++;
+                    x();
+                }
+            } else if (event.ctrlKey && event.keyCode == 89) {
+                if (mods > 0) {
+                    mods--;
+                    x();
+                }
             }else  if (event.key === "Delete") {
                 if (canvas.getActiveObject() && !canvas.getActiveObject().isEditing) {
                     Remove();
@@ -1146,6 +1197,7 @@
                 _clipboard.left += 10;
                 canvas.setActiveObject(clonedObj);
                 canvas.requestRenderAll();
+                updateModifications();
             });
         }
 
@@ -1216,6 +1268,48 @@
         $('#our-demo #proportion').change(function(){
             $('#our-demo #objectWidth').trigger('input');
         });
+
+        $('#textFontFamily, #textFontSize, #textColor, #textBold, #textItalic, #textUnderline, #textLineThrough').on('change',function(){
+            const obj = canvas.getActiveObject();
+            if (!obj) {
+                return;
+            }
+
+            console.log(1);
+            updateModifications();
+        });
+
+        let saveTimer1 = {
+            x: function (){
+                saveTimer1.time = setTimeout(() => {
+                    updateModifications();
+                    saveTimer1.time = null;
+                }, 1500);
+            },
+            time: null,
+            y: function(){
+                if (saveTimer1.time) {
+                    clearTimeout(saveTimer1.time);
+                    saveTimer1.x();
+                }else{
+                    saveTimer1.x();
+                }
+            },
+            z: function(){
+                saveTimer1.y();
+                $(this).off('mouseleave', saveTimer1.z);
+            },
+        };
+
+        $('#our-demo .btns-number').on('mousedown','button', function(){
+            $(this).off('mouseleave', saveTimer1.z);
+            $(this).mouseleave(saveTimer1.z);
+        });
+
+        $("#our-demo .btns-number button").mouseup(function() {
+            saveTimer1.y();
+        });
+
     </script>
 </body>
 
