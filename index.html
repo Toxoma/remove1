@@ -1089,7 +1089,10 @@
         }
 
         let mods = 0,
-            state = [];
+            state = [],
+            additionalProperties = [
+                'hasControls',
+            ];
             
             function stringifyCanvas(canvas)
             {
@@ -1097,11 +1100,11 @@
                     sCanvas = JSON.stringify(canvas);
                     oCanvas = JSON.parse(sCanvas);
 
-                    // $.each(oCanvas.objects, function(n, object) {
-                    //     $.each(additionalProperties, function(m, field) {
-                    //         oCanvas.objects[n][field] = canvas.item(n)[field];
-                    //     });
-                    // });
+                    $.each(oCanvas.objects, function(n, object) {
+                        $.each(additionalProperties, function(m, field) {
+                            oCanvas.objects[n][field] = canvas.item(n)[field];
+                        });
+                    });
                 
                     return JSON.stringify(oCanvas);
                 } catch (error) {
