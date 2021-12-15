@@ -13,8 +13,7 @@
     #rec387249670,
     #rec387249789,
     #rec387249820,
-    #rec387249894,
-    #rec388162706{
+    #rec387249894{
         display: none;
     }
     </style>
@@ -313,7 +312,7 @@
         // kv - new//
         ///////////////Показываем стартовые блоки -- точка входа пользователя//////////
         function showStartBlock() {
-            $('#rec387249670,#rec387249789,#rec388162706').css({
+            $('#rec387249670,#rec387249789').css({
                 display: 'block'
             });
         }
@@ -418,36 +417,7 @@
         });
     
     
-        $('#mainPhotoUpload').change(function (event) {
-            try {
-            let reader = new FileReader();
-            reader.readAsDataURL(event.target.files[0]);
-            reader.onload = function () {
-                fabric.Image.fromURL(reader.result,
-                    function (img) {
-                        img.set({
-                            top: canvas.height / 2 - img.height * img.scaleY / 2,
-                            left: canvas.width / 2 - img.width * img.scaleX / 2,
-                            ownType: 'mainFoto',
-                        });
-                        canvas.setBackgroundImage(img);
-                        canvas.renderAll();
-                        mainFoto = fabric.util.object.clone(img);
-    
-                        $('#rec387249820').hide();
-                        $('#rec387249894').show();
-                        $('.container-page-move').removeClass('d-none');
-                        $('#our-demo #mainPhotoUpload').val('');
-                        scrollToCanvas();
-                    }
-                );
-            };
-            } catch (error) {
-                alert('Проблема при загрузке изображения!');
-                console.error('error: ', error);
-                $('#our-demo #mainPhotoUpload').val('');
-            }
-        });
+        
     
         let cropImg = document.getElementById('cropImage');
             let page = 3;
@@ -1290,11 +1260,46 @@
                     }
                 }
             };
+
+    //------------mainPhoto-------------------------
+        // $('#mainPhotoUpload').change(function (event) {
+        //     try {
+        //     let reader = new FileReader();
+        //     reader.readAsDataURL(event.target.files[0]);
+        //     reader.onload = function () {
+        //         fabric.Image.fromURL(reader.result,
+        //             function (img) {
+        //                 img.set({
+        //                     top: canvas.height / 2 - img.height * img.scaleY / 2,
+        //                     left: canvas.width / 2 - img.width * img.scaleX / 2,
+        //                     ownType: 'mainFoto',
+        //                 });
+        //                 canvas.setBackgroundImage(img);
+        //                 canvas.renderAll();
+        //                 mainFoto = fabric.util.object.clone(img);
+    
+        //                 $('#rec387249820').hide();
+        //                 $('#rec387249894').show();
+        //                 $('.container-page-move').removeClass('d-none');
+        //                 $('#our-demo #mainPhotoUpload').val('');
+        //                 scrollToCanvas();
+        //             }
+        //         );
+        //     };
+        //     } catch (error) {
+        //         alert('Проблема при загрузке изображения!');
+        //         console.error('error: ', error);
+        //         $('#our-demo #mainPhotoUpload').val('');
+        //     }
+        // });
     
     // --------------------- CROPPER ------------------------
     let cropper;
     
-    $('#fileUpload').change(function (event) {
+    $('#our-demo #fileUpload, #our-demo #mainPhotoUpload').change(function (event) {
+        try {
+        let target =  $(this).attr('id');
+        console.log('target: ', target);
         let reader = new FileReader();
         reader.readAsDataURL(event.target.files[0]);
         reader.onload = function () {
@@ -1383,6 +1388,11 @@
                 });
             }
         };
+        } catch (error) {
+                alert('Проблема при загрузке изображения!');
+                console.error('error: ', error);
+                $('#our-demo #fileUpload, #our-demo #mainPhotoUpload').val('');
+        }
     });
     
     // --------------------- CROPPER destroy------------------------
