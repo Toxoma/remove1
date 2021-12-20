@@ -515,7 +515,6 @@
                     success: function (resp) {
                         $('#rec387249820').hide();
                         $('#our-demo').show();
-                        // $('#rec387249894').show();
                         $('#form387249820 .mistake').hide();
                         $('.container-page-move').removeClass('d-none');
                         scrollToCanvas();
@@ -1140,7 +1139,6 @@
             function returnToWbForm(){
                 $('#rec387249820').show();
                 $('#our-demo').hide();
-                // $('#rec387249894').hide();
             }
     
             $(document).ready(function(){
@@ -1260,38 +1258,6 @@
                 }
             };
     
-    //------------mainPhoto-------------------------
-        // $('#mainPhotoUpload').change(function (event) {
-        //     try {
-        //     let reader = new FileReader();
-        //     reader.readAsDataURL(event.target.files[0]);
-        //     reader.onload = function () {
-                // fabric.Image.fromURL(reader.result,
-                //     function (img) {
-                //         img.set({
-                //             top: canvas.height / 2 - img.height * img.scaleY / 2,
-                //             left: canvas.width / 2 - img.width * img.scaleX / 2,
-                //             ownType: 'mainFoto',
-                //         });
-                //         canvas.setBackgroundImage(img);
-                //         canvas.renderAll();
-                //         mainFoto = fabric.util.object.clone(img);
-    
-                //         $('#rec387249820').hide();
-                //         $('#rec387249894').show();
-                //         $('.container-page-move').removeClass('d-none');
-                //         $('#our-demo #mainPhotoUpload').val('');
-                //         scrollToCanvas();
-                //     }
-                // );
-        //     };
-        //     } catch (error) {
-        //         alert('Проблема при загрузке изображения!');
-        //         console.error('error: ', error);
-        //         $('#our-demo #mainPhotoUpload').val('');
-        //     }
-        // });
-    
     // --------------------- CROPPER ------------------------
     let cropper;
     
@@ -1327,7 +1293,6 @@
 
                                     $('#rec387249820').hide();
                                     $('#our-demo').show();
-                                    // $('#rec387249894').show();
                                     $('.container-page-move').removeClass('d-none');
                                     $('#our-demo #mainPhotoUpload').val('');
                                     scrollToCanvas();
