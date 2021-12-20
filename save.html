@@ -10,6 +10,7 @@
     </style>
     
     <style>
+    
     #rec387249670,
     #rec387249789,
     #rec387249820,
@@ -17,6 +18,7 @@
     #rec388162706{
         display: none;
     }
+    
     </style>
     
     <div class="continer" id="our-demo">
@@ -318,6 +320,7 @@
                 display: 'block'
             });
         }
+        showStartBlock();
     </script>
     
     <script>
@@ -1283,8 +1286,10 @@
                             fabric.Image.fromURL(croppedCanvas.toDataURL(),
                                 function (img) {
                                     img.set({
-                                        top: canvas.height / 2 - img.height * img.scaleY / 2,
-                                        left: canvas.width / 2 - img.width * img.scaleX / 2,
+                                        top: 0,
+                                        left: 0,
+                                        scaleX: canvas.width / img.width,
+                                        scaleY: canvas.height / img.height,
                                         ownType: 'mainFoto',
                                     });
                                     canvas.setBackgroundImage(img);
